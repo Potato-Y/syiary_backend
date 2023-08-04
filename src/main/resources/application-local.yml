@@ -1,0 +1,33 @@
+# 개발 환경 전용
+# logging slf4j
+logging:
+  # default logging 프레임워크 설정 파일 참조
+  config: classpath:log4j2/log4j2-local.xml
+
+spring:
+  devtools:
+    livereload:
+      enabled: true # 프론트 코드 변경시 자동 적용
+    restart:
+      enabled: true # 코드 변경시 자동 재시작
+  jpa:
+    # 전송 쿼리 확인
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+jwt:
+  issuer: admin@email.com
+  secret_key: sample-key
+
+env:
+  mode: local

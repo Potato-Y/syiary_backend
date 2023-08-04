@@ -1,0 +1,12 @@
+<html
+        layout:decorate="~{layout}"
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns="http://www.w3.org/1999/html"
+>
+<div layout:fragment="content">
+    Syiary를 경험하세요.<br>
+    <button type="button" class="btn btn-primary btn-lg" th:onclick="|location.href='@{/login}'|">로그인</button><br>
+    <button type="button" class="btn btn-primary btn-lg btn-info" th:onclick="|location.href='@{/signup}'|">회원가입</button>
+</div>
+</html>

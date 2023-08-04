@@ -1,0 +1,60 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.1.1'
+    id 'io.spring.dependency-management' version '1.1.0'
+}
+
+group = 'io.potatoy'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    sourceCompatibility = '17'
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation('org.springframework.boot:spring-boot-starter-web')
+    implementation('org.springframework.boot:spring-boot-starter-data-jpa:3.1.1') // Spring Data JPA
+    implementation('org.springframework.boot:spring-boot-starter-thymeleaf:3.0.4') // thymeleaf 템플릿
+    implementation('nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.2.1')
+    implementation('org.springframework.boot:spring-boot-starter-security:3.0.4') // 스프링 시큐리티
+    // 타임리프에서 스프링 시큐리티를 사용하기 위한 의존성 추가
+    implementation('org.thymeleaf.extras:thymeleaf-extras-springsecurity6:3.1.1.RELEASE')
+    implementation('io.jsonwebtoken:jjwt:0.9.1') // 자바 jwt 라이브러리
+    implementation('javax.xml.bind:jaxb-api:2.3.1') // XML 문서와 JAVA 객체 간 매핑을 자동화
+    implementation('org.springframework.boot:spring-boot-starter-validation:3.1.1') // validation
+    implementation('org.springframework.boot:spring-boot-starter-log4j2:3.1.2') // log4j2
+
+    developmentOnly('org.springframework.boot:spring-boot-devtools:3.0.4') // 변경 내용 자동 재시작 추가
+
+    compileOnly('org.projectlombok:lombok:1.18.26')
+    compileOnly('org.springframework.boot:spring-boot-starter-actuator:3.1.1')
+
+    annotationProcessor('org.projectlombok:lombok:1.18.28')
+
+    runtimeOnly('com.h2database:h2')
+
+    testAnnotationProcessor('org.projectlombok:lombok:1.18.26')
+    testImplementation('org.springframework.boot:spring-boot-starter-test:3.1.0')
+    testImplementation('org.springframework.security:spring-security-test:6.0.2')
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+configurations {
+    all{
+        // 내부 로깅 프레임워크 Logback을 제외
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+    }
+}

@@ -1,0 +1,16 @@
+# 운영 환경 전용
+# logging slf4j
+logging:
+  # default logging 프레임워크 설정 파일 참조
+  config: classpath:log4j2/log4j2-prod.xml
+
+server:
+  error:
+    include-message: never
+
+jwt:
+  issuer: ${jwt_issuer}
+  secret_key: ${jwt_secret_key}
+
+env:
+  mode: prod
