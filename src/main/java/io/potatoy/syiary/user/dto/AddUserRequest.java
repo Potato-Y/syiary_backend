@@ -17,4 +17,6 @@ public class AddUserRequest {
     private String email;
     @NotNull
     private String password;
+    @NotNull
+    private String nickname;
 }

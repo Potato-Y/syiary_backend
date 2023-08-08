@@ -23,9 +23,11 @@ public class UserService {
         User user = userRepository.save(User.builder()
                 .email(dto.getEmail())
                 .password(encoder.encode(dto.getPassword()))
+                .nickname(dto.getNickname())
                 .build());
 
-        logger.info("save. userId={}, userEmail={}", user.getId(), user.getEmail());
+        logger.info("save. userId={}, userEmail={}, userNickname={}", user.getId(), user.getEmail(),
+                user.getNickname());
 
         return user;
     }
