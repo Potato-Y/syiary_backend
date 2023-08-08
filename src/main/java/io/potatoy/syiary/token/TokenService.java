@@ -3,6 +3,8 @@ package io.potatoy.syiary.token;
 import java.time.Duration;
 
 import io.potatoy.syiary.user.UserService;
+import io.potatoy.syiary.user.dto.UserResponse;
+
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -83,6 +85,8 @@ public class TokenService {
         // access token 생성
         String accessToken = tokenProvider.generateToken(user, ACCESS_TOKEN_DURATION);
 
-        return new AuthenticateResponse(accessToken, refreshTokenModel.getRefreshToken());
+        UserResponse userResponse = new UserResponse(user.getId(), user.getEmail(), user.getNickname());
+
+        return new AuthenticateResponse(accessToken, refreshTokenModel.getRefreshToken(), userResponse);
     }
 }
