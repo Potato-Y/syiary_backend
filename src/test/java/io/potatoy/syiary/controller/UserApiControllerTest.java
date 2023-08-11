@@ -33,7 +33,8 @@ class UserApiControllerTest {
         final String url = "/api/signup";
         final String email = "test@mail.com";
         final String password = "test";
-        final AddUserRequest addUserRequest = new AddUserRequest(email, password);
+        final String nickname = "test user";
+        final AddUserRequest addUserRequest = new AddUserRequest(email, password, nickname);
 
         // 객체 JSON으로 직렬화
         final String requestBody = objectMapper.writeValueAsString(addUserRequest);
@@ -46,7 +47,8 @@ class UserApiControllerTest {
         // then 응답코드가 201인지 확인
         result
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.email").value(email));
+                .andExpect(jsonPath("$.email").value(email))
+                .andExpect(jsonPath("$.nickname").value(nickname));
 
     }
 
