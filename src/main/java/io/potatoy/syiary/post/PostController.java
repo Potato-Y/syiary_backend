@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.potatoy.syiary.post.dto.CreatePostRequest;
 import io.potatoy.syiary.post.dto.CreatePostResponse;
-import io.potatoy.syiary.post.dto.DeletePostRequest;
 import io.potatoy.syiary.post.dto.FixPostRequest;
 import lombok.RequiredArgsConstructor;
 
@@ -49,10 +48,9 @@ public class PostController {
     @DeleteMapping("/{groupUri}/posts/{postId}") // 포스트 삭제
     public ResponseEntity<String> deletePost(
             @PathVariable String groupUri,
-            @PathVariable Long postId,
-            @Validated @RequestBody DeletePostRequest request) {
+            @PathVariable Long postId) {
 
-        postService.deletePost(groupUri, postId, request);
+        postService.deletePost(groupUri, postId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }

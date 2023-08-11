@@ -9,10 +9,10 @@ import org.springframework.stereotype.Service;
 
 import io.potatoy.syiary.group.entity.Group;
 import io.potatoy.syiary.group.entity.GroupRepository;
+import io.potatoy.syiary.group.exception.GroupException;
 import io.potatoy.syiary.group.util.GroupUtil;
 import io.potatoy.syiary.post.dto.CreatePostRequest;
 import io.potatoy.syiary.post.dto.CreatePostResponse;
-import io.potatoy.syiary.post.dto.DeletePostRequest;
 import io.potatoy.syiary.post.dto.FixPostRequest;
 import io.potatoy.syiary.post.entity.Post;
 import io.potatoy.syiary.post.entity.PostFile;
@@ -46,9 +46,19 @@ public class PostService {
      * @return
      * @throws Exception
      */
-    public CreatePostResponse createPost(String postUri, CreatePostRequest dto) throws Exception {
+    public CreatePostResponse createPost(String groupUri, CreatePostRequest dto) throws Exception {
         User user = securityUtil.getCurrentUser();
-        Group group = groupRepository.findById(dto.getGroupId()).get();
+
+        // 그룹 정보를 불러온다.
+        Optional<Group> _group = groupRepository.findByGroupUri(groupUri);
+        if (_group.isEmpty()) {
+            String message = "Group not found.";
+            logger.warn("deleteGroup:GroupException. message={}", message);
+
+            throw new GroupException(message);
+        }
+
+        Group group = _group.get();
 
         groupUtil.checkGroupUser(user, group); // 사용자가 그룹에 포함되어 있는지 확인
 
@@ -82,7 +92,18 @@ public class PostService {
      */
     public void fixPost(String groupUri, Long postId, FixPostRequest dto) {
         User user = securityUtil.getCurrentUser();
-        Group group = groupRepository.findById(dto.getGroupId()).get();
+
+        // 그룹 정보를 불러온다.
+        Optional<Group> _group = groupRepository.findByGroupUri(groupUri);
+        if (_group.isEmpty()) {
+            String message = "Group not found.";
+            logger.warn("deleteGroup:GroupException. message={}", message);
+
+            throw new GroupException(message);
+        }
+
+        Group group = _group.get();
+
         Optional<Post> post = postRepository.findById(postId);
 
         // 포스트가 없는지 확인한다.
@@ -108,9 +129,20 @@ public class PostService {
         postRepository.save(post.get().updateContent(dto.getContent()));
     }
 
-    public void deletePost(String groupUri, Long postId, DeletePostRequest dto) {
+    public void deletePost(String groupUri, Long postId) {
         User user = securityUtil.getCurrentUser();
-        Group group = groupRepository.findById(dto.getGroupId()).get();
+
+        // 그룹 정보를 불러온다.
+        Optional<Group> _group = groupRepository.findByGroupUri(groupUri);
+        if (_group.isEmpty()) {
+            String message = "Group not found.";
+            logger.warn("deleteGroup:GroupException. message={}", message);
+
+            throw new GroupException(message);
+        }
+
+        Group group = _group.get();
+
         Optional<Post> post = postRepository.findById(postId);
 
         // 포스트가 없는지 확인한다.

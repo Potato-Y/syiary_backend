@@ -17,8 +17,6 @@ import lombok.Setter;
 public class CreatePostRequest {
 
     @NotNull
-    private Long groupId;
-    @NotNull
     private String content;
     private List<MultipartFile> files;
 }

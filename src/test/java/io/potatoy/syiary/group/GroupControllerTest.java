@@ -112,7 +112,7 @@ public class GroupControllerTest {
         // 새로운 그룹 생성
         Group group = testUtil.createTestGroup(user, groupName);
 
-        final DeleteGroupRequest request = new DeleteGroupRequest(group.getId(), groupName);
+        final DeleteGroupRequest request = new DeleteGroupRequest(groupName);
 
         // 객체 JSON으로 직렬화
         final String requestBody = objectMapper.writeValueAsString(request);
@@ -141,7 +141,7 @@ public class GroupControllerTest {
         Group group = testUtil.createTestGroup(hostUser, groupName);
 
         // request 객체 생성 및, JSON 직렬화
-        final SignupGroupRequest request = new SignupGroupRequest(group.getId(), guestUser.getEmail());
+        final SignupGroupRequest request = new SignupGroupRequest(guestUser.getEmail());
         final String requestBody = objectMapper.writeValueAsString(request);
 
         // when 게스트 가입 요청
@@ -169,7 +169,7 @@ public class GroupControllerTest {
         testUtil.createGroupMember(memberUser, group);
 
         // request 객체 생성 및, JSON 직렬화
-        final SecessionGroupRequest request = new SecessionGroupRequest(group.getId(), memberUser.getEmail());
+        final SecessionGroupRequest request = new SecessionGroupRequest(memberUser.getEmail());
         final String requestBody = objectMapper.writeValueAsString(request);
 
         // when 멤버 탈퇴 요청

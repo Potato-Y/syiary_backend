@@ -11,8 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class DeleteGroupRequest {
-    @NotNull
-    private Long id;
+
     @NotNull
     private String groupNameSign;
 }

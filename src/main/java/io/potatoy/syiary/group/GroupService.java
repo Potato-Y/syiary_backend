@@ -134,24 +134,24 @@ public class GroupService {
         User user = securityUtil.getCurrentUser();
         Long userId = user.getId();
 
-        Group loadGroup = groupRepository.findById(dto.getId()).get();
-
-        /**
-         * 요청한 사람이 group의 host인지 확인하고 처리한다.
-         * 1. 유저 id와 host id가 동일한지 확인한다.
-         * 2. 요청한 group uri와 db에서 불러온 group의 uri가 동일한지 확인한다.
-         * 3. user가 작성한 sign과 group 이름과 동일한지 확인한다.
-         */
-        if (!userId.equals(loadGroup.getHostUser().getId())) {
-            // host id와 요청자의 id가 동일하지 않음
-            String message = "The group host and the requester's id are not the same.";
+        Optional<Group> _loadGroup = groupRepository.findByGroupUri(groupUri);
+        if (_loadGroup.isEmpty()) {
+            String message = "Group not found.";
             logger.warn("deleteGroup:GroupException. message={}", message);
 
             throw new GroupException(message);
         }
-        if (!groupUri.equals(loadGroup.getGroupUri())) {
-            // 요청한 uri과 디비의 uri이 다름.
-            String message = "Requested uri and db uri are different.";
+
+        Group loadGroup = _loadGroup.get();
+
+        /**
+         * 요청한 사람이 group의 host인지 확인하고 처리한다.
+         * 1. 유저 id와 host id가 동일한지 확인한다.
+         * 2. user가 작성한 sign과 group 이름과 동일한지 확인한다.
+         */
+        if (!userId.equals(loadGroup.getHostUser().getId())) {
+            // host id와 요청자의 id가 동일하지 않음
+            String message = "The group host and the requester's id are not the same.";
             logger.warn("deleteGroup:GroupException. message={}", message);
 
             throw new GroupException(message);
@@ -183,7 +183,15 @@ public class GroupService {
         User user = securityUtil.getCurrentUser();
 
         // 그룹 정보를 불러온다.
-        Group group = groupRepository.findById(dto.getGroupId()).get();
+        Optional<Group> _group = groupRepository.findByGroupUri(groupUri);
+        if (_group.isEmpty()) {
+            String message = "Group not found.";
+            logger.warn("deleteGroup:GroupException. message={}", message);
+
+            throw new GroupException(message);
+        }
+
+        Group group = _group.get();
 
         // 요청자가 host가 맞는지 확인한다.
         if (!group.getHostUser().getId().equals(user.getId())) {
@@ -231,7 +239,15 @@ public class GroupService {
         User user = securityUtil.getCurrentUser();
 
         // 그룹 정보를 불러온다.
-        Group group = groupRepository.findById(dto.getGroupId()).get();
+        Optional<Group> _group = groupRepository.findByGroupUri(groupUri);
+        if (_group.isEmpty()) {
+            String message = "Group not found.";
+            logger.warn("deleteGroup:GroupException. message={}", message);
+
+            throw new GroupException(message);
+        }
+
+        Group group = _group.get();
 
         // 요청자가 host가 맞는지 확인한다.
         if (!group.getHostUser().getId().equals(user.getId())) {

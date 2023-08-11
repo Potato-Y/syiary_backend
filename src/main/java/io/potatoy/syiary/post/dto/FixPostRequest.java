@@ -1,6 +1,5 @@
 package io.potatoy.syiary.post.dto;
 
-import groovyjarjarantlr4.v4.runtime.misc.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +11,5 @@ import lombok.Setter;
 @Setter
 public class FixPostRequest {
 
-    @NotNull
-    private Long groupId;
     private String content;
 }
