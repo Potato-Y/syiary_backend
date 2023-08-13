@@ -1,9 +1,15 @@
 package io.potatoy.syiary.group.entity;
 
+import java.time.LocalDateTime;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import io.potatoy.syiary.enums.State;
 import io.potatoy.syiary.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
@@ -21,6 +27,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class Group {
 
     @Id
@@ -41,6 +48,10 @@ public class Group {
     @Enumerated(EnumType.STRING)
     @Column(name = "state", nullable = false)
     private State state;
+
+    @CreatedDate // 엔티티가 생성될 때 생성 시간 저장
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
     @Builder
     public Group(String groupUri, String groupName, User hostUser, State state) {

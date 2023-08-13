@@ -114,13 +114,42 @@ public class GroupService {
         for (GroupMember member : inMembers) {
             Group group = member.getGroup();
             GroupInfoResponse response = new GroupInfoResponse(group.getId(), group.getGroupUri(),
-                    group.getGroupName());
+                    group.getGroupName(), group.getCreatedAt());
 
             groups.add(response);
         }
 
         logger.info("loadGroups. userId={}", user.getId());
         return groups;
+    }
+
+    public GroupInfoResponse loadGroupInfo(String groupUri) {
+        // User 정보 가져오기
+        User user = securityUtil.getCurrentUser();
+
+        // Uri를 통해 그룹을 불러오고 그룹이 있는지 확인한다.
+        Optional<Group> _group = groupRepository.findByGroupUri(groupUri);
+        if (_group.isEmpty()) {
+            String message = "Group not found.";
+            logger.warn("loadGroupInfo:GroupException. userId={}, groupUri={}\nmessage={}", user.getId(), groupUri,
+                    message);
+
+            throw new GroupException(message);
+        }
+        Group group = _group.get();
+
+        // 사용자가 멤버로 속해있는지 확인한다.
+        Optional<GroupMember> _groupMember = groupMemberRepository.findByUserAndGroup(user, group);
+        if (_groupMember.isEmpty()) {
+            String message = "There are no users in the member list.";
+            logger.warn("loadGroupInfo:GroupMemberException. userId={}, groupId={}\nmessage={}",
+                    user.getId(), group.getId(), message);
+
+            throw new GroupMemberException(message);
+        }
+
+        // 그룹에 속해있으면 그룹 정보를 반환한다.
+        return new GroupInfoResponse(group.getId(), group.getGroupUri(), group.getGroupName(), group.getCreatedAt());
     }
 
     /**

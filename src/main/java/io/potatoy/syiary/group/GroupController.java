@@ -42,6 +42,13 @@ public class GroupController {
         return ResponseEntity.status(HttpStatus.OK).body(groups);
     }
 
+    @GetMapping("/groups/{groupUri}") // 그룹 정보 가져오기
+    public ResponseEntity<GroupInfoResponse> getGroupInfo(@PathVariable String groupUri) {
+        GroupInfoResponse group = groupService.loadGroupInfo(groupUri);
+
+        return ResponseEntity.status(HttpStatus.OK).body(group);
+    }
+
     @PostMapping("/groups/{groupUri}/members") // 그룹에 유저 추가
     public ResponseEntity<String> signupGroup(@PathVariable String groupUri,
             @Validated @RequestBody SignupGroupRequest request) {

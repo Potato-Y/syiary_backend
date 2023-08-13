@@ -182,6 +182,31 @@ public class GroupControllerTest {
                 .andExpect(status().isNoContent());
     }
 
+    @DisplayName("getGroupInfo(): 그룹 정보 가져오기")
+    @WithMockUser("host@mail.com")
+    @Test
+    public void successGetGroupInfo() throws Exception {
+        // given 그룹 정보를 받아오기 위한 그룹 생성
+        final String url = "/api/groups/{groupUri}";
+        final String groupName = "test_group";
+        final User hostUser = testUtil.createTestUser("host@mail.com", "host");
+
+        // 새로운 그룹 생성
+        Group group = testUtil.createTestGroup(hostUser, groupName);
+
+        // when 요청
+        ResultActions result = mockMvc.perform(get(url.replace("{groupUri}", group.getGroupUri())));
+
+        // then 결과 확인
+        result
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(group.getId()))
+                .andExpect(jsonPath("$.groupUri").value(group.getGroupUri()))
+                .andExpect(jsonPath("$.groupName").value(group.getGroupName()))
+                .andExpect(jsonPath("$.createAt").value(group.getCreatedAt().toString()));
+
+    }
+
     @DisplayName("getGroupList(): 가입한 그룹의 리스트를 모두 가져온다.")
     @WithMockUser("member@mail.com")
     @Test
