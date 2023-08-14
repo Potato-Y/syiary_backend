@@ -30,7 +30,6 @@ public class FileHandler {
             Post post,
             List<MultipartFile> multipartFiles) throws Exception {
 
-        logger.info("gogogogo");
         UriMaker uriMaker = new UriMaker();
 
         // 반환할 파일 리스트
@@ -46,7 +45,7 @@ public class FileHandler {
         String absolutePath = new File("").getAbsolutePath() + "/";
 
         // 경로를 지정, 해당 경로에 저장
-        String path = "files/" + Long.toString(post.getId()) + "/" + user.getId();
+        String path = "files/" + Long.toString(group.getId()) + "/" + Long.toString(post.getId());
         File file = new File(path);
         // 저장할 위치의 디렉토리가 존재하지 않을 경우 생성
 

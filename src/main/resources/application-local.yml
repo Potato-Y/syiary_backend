@@ -16,6 +16,10 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  servlet:
+    multipart:
+      maxFileSize: 50MB
+      maxRequestSize: 50MB
 
   datasource:
     url: jdbc:h2:mem:testdb
