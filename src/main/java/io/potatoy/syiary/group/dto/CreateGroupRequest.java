@@ -1,6 +1,6 @@
 package io.potatoy.syiary.group.dto;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +11,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CreateGroupRequest {
-    @NotNull
+    @NotBlank
     private String groupName;
 }
