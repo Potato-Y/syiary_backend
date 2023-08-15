@@ -203,7 +203,10 @@ public class GroupControllerTest {
                 .andExpect(jsonPath("$.id").value(group.getId()))
                 .andExpect(jsonPath("$.groupUri").value(group.getGroupUri()))
                 .andExpect(jsonPath("$.groupName").value(group.getGroupName()))
-                .andExpect(jsonPath("$.createAt").value(group.getCreatedAt().toString()));
+                .andExpect(jsonPath("$.createAt").value(group.getCreatedAt().toString()))
+                .andExpect(jsonPath("$.hostUser.userId").value(hostUser.getId()))
+                .andExpect(jsonPath("$.hostUser.email").value(hostUser.getEmail()))
+                .andExpect(jsonPath("$.hostUser.nickname").value(hostUser.getNickname()));
 
     }
 
@@ -234,7 +237,13 @@ public class GroupControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(group1.getId()))
                 .andExpect(jsonPath("$[0].groupName").value(group1.getGroupName()))
+                .andExpect(jsonPath("$[0].hostUser.userId").value(hostUser.getId()))
+                .andExpect(jsonPath("$[0].hostUser.email").value(hostUser.getEmail()))
+                .andExpect(jsonPath("$[0].hostUser.nickname").value(hostUser.getNickname()))
                 .andExpect(jsonPath("$[1].id").value(group2.getId()))
-                .andExpect(jsonPath("$[1].groupName").value(group2.getGroupName()));
+                .andExpect(jsonPath("$[1].groupName").value(group2.getGroupName()))
+                .andExpect(jsonPath("$[1].hostUser.userId").value(hostUser.getId()))
+                .andExpect(jsonPath("$[1].hostUser.email").value(hostUser.getEmail()))
+                .andExpect(jsonPath("$[1].hostUser.nickname").value(hostUser.getNickname()));
     }
 }

@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import io.potatoy.syiary.group.entity.Group;
+import io.potatoy.syiary.user.dto.UserResponse;
 import io.potatoy.syiary.user.entity.User;
 import io.potatoy.syiary.enums.State;
 import io.potatoy.syiary.group.dto.CreateGroupRequest;
@@ -115,10 +116,13 @@ public class GroupService {
 
         for (GroupMember member : inMembers) {
             Group group = member.getGroup();
-            GroupInfoResponse response = new GroupInfoResponse(group.getId(), group.getGroupUri(),
-                    group.getGroupName(), group.getCreatedAt());
 
-            groups.add(response);
+            UserResponse userResponse = new UserResponse(group.getHostUser().getId(), group.getHostUser().getEmail(),
+                    group.getHostUser().getNickname());
+            GroupInfoResponse groupInfoResponse = new GroupInfoResponse(group.getId(), group.getGroupUri(),
+                    group.getGroupName(), group.getCreatedAt(), userResponse);
+
+            groups.add(groupInfoResponse);
         }
 
         logger.info("loadGroups. userId={}", user.getId());
@@ -151,7 +155,10 @@ public class GroupService {
         }
 
         // 그룹에 속해있으면 그룹 정보를 반환한다.
-        return new GroupInfoResponse(group.getId(), group.getGroupUri(), group.getGroupName(), group.getCreatedAt());
+        UserResponse userResponse = new UserResponse(group.getHostUser().getId(), group.getHostUser().getEmail(),
+                group.getHostUser().getNickname());
+        return new GroupInfoResponse(group.getId(), group.getGroupUri(), group.getGroupName(), group.getCreatedAt(),
+                userResponse);
     }
 
     /**

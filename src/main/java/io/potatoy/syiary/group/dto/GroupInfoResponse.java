@@ -2,6 +2,7 @@ package io.potatoy.syiary.group.dto;
 
 import java.time.LocalDateTime;
 
+import io.potatoy.syiary.user.dto.UserResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,4 +16,5 @@ public class GroupInfoResponse {
     private String groupUri;
     private String groupName;
     private LocalDateTime createAt;
+    private UserResponse hostUser;
 }
