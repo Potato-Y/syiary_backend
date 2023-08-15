@@ -166,4 +166,23 @@ public class PostService {
 
         postRepository.delete(post.get());
     }
+
+    /**
+     * 그룹에 해당하는 포스터를 모두 지운다.
+     * 
+     * @param group
+     */
+    public void deleteAllPost(Group group) {
+        List<Post> posts = postRepository.findAllByGroup(group);
+
+        // 포스트를 지우기 전에 파일을 먼저 삭제한다.
+        for (Post post : posts) {
+            List<PostFile> postFiles = postFileRepository.findAllByPost(post);
+
+            for (PostFile postFile : postFiles) {
+                fileHandler.deleteFile(postFile);
+            }
+        }
+
+    }
 }

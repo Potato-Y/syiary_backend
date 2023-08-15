@@ -106,4 +106,14 @@ public class FileHandler {
         return postFileList;
 
     }
+
+    public void deleteFile(PostFile postFile) {
+        // 프로젝트 폴더에 저장하기 위해 절대 경로를 설정 (window의 Tomcat은 temp 파일 이용)
+        String absolutePath = new File("").getAbsolutePath() + "/";
+        final String filePath = absolutePath + "files/" + postFile.getPost().getGroup().getId() + "/"
+                + postFile.getPost().getId() + "/" + postFile.getFileUrl();
+
+        File file = new File(filePath);
+        file.delete();
+    }
 }

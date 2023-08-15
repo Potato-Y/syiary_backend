@@ -23,6 +23,7 @@ import io.potatoy.syiary.group.dto.SecessionGroupRequest;
 import io.potatoy.syiary.group.dto.SignupGroupRequest;
 import io.potatoy.syiary.group.exception.GroupException;
 import io.potatoy.syiary.group.exception.GroupMemberException;
+import io.potatoy.syiary.post.PostService;
 import io.potatoy.syiary.security.util.SecurityUtil;
 import io.potatoy.syiary.user.entity.UserRepository;
 import io.potatoy.syiary.user.exception.NotFoundUserException;
@@ -38,6 +39,7 @@ public class GroupService {
     private final GroupMemberRepository groupMemberRepository;
     private final UserRepository userRepository;
     private final SecurityUtil securityUtil;
+    private final PostService postService;
 
     /**
      * GroupMember 객체를 생성하여 반환한다.
@@ -197,7 +199,11 @@ public class GroupService {
         List<GroupMember> groupMember = groupMemberRepository.findByGroup(loadGroup);
         groupMemberRepository.deleteAll(groupMember);
 
+        // 그룹에 업로드한 포스트들 모두 삭제
+        postService.deleteAllPost(loadGroup);
+
         logger.info("deleteGroup. userId={}, groupId={}", userId, loadGroup.getId());
+
         groupRepository.delete(loadGroup);
     }
 
