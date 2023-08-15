@@ -182,6 +182,34 @@ public class GroupControllerTest {
                 .andExpect(status().isNoContent());
     }
 
+    @DisplayName("secessionGroup(): 그룹에서 탈퇴한다.")
+    @WithMockUser("member@mail.com")
+    @Test
+    public void successMemberSecessionGroup() throws Exception {
+        // given 멤버 제거를 위한 그룹과 멤버들 생성
+        final String url = "/api/groups/{groupUri}/members";
+        final String groupName = "test_group";
+        final User hostUser = testUtil.createTestUser("host@mail.com", "host");
+        final User memberUser = testUtil.createTestUser("member@mail.com", "member");
+
+        // 새로운 그룹 생성 및 멤버 추가
+        Group group = testUtil.createTestGroup(hostUser, groupName);
+        testUtil.createGroupMember(memberUser, group);
+
+        // request 객체 생성 및, JSON 직렬화
+        final SecessionGroupRequest request = new SecessionGroupRequest("");
+        final String requestBody = objectMapper.writeValueAsString(request);
+
+        // when 멤버 탈퇴 요청
+        ResultActions result = mockMvc.perform(delete(url.replace("{groupUri}", group.getGroupUri()))
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(requestBody));
+
+        // then 응답 코드가 204인지 확인한다.
+        result
+                .andExpect(status().isNoContent());
+    }
+
     @DisplayName("getGroupInfo(): 그룹 정보 가져오기")
     @WithMockUser("host@mail.com")
     @Test

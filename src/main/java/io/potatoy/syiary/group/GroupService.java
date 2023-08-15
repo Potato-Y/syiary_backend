@@ -272,6 +272,7 @@ public class GroupService {
 
     /**
      * host가 group에 속해있는 특정 user를 탈퇴시킨다.
+     * 혹은 자신이 group에서 탈퇴한다.
      * 
      * @param groupUri
      * @param dto
@@ -291,32 +292,52 @@ public class GroupService {
 
         Group group = _group.get();
 
-        // 요청자가 host가 맞는지 확인한다.
-        if (!group.getHostUser().getId().equals(user.getId())) {
-            // Group의 Host User와 User가 동일하지 않습니다.
-            String message = "Group Host User and User are not the same.";
-            logger.warn("secessionGroup:GroupException. userId={}, groupId={}\nmessage={}", user.getId(), group.getId(),
-                    message);
+        // 특정 유저를 탈퇴시키려 하면 host 유저가 맞는지 확인
+        if (!dto.getUserEmail().isBlank()) {
+            // 요청자가 host가 맞는지 확인한다.
+            if (!group.getHostUser().getId().equals(user.getId())) {
+                // Group의 Host User와 User가 동일하지 않습니다.
+                String message = "Group Host User and User are not the same.";
+                logger.warn("secessionGroup:GroupException. userId={}, groupId={}\nmessage={}", user.getId(),
+                        group.getId(),
+                        message);
 
-            throw new GroupException(message);
+                throw new GroupException(message);
+            }
         }
 
         // 탈퇴하고자 하는 유저가 존재하는지 확인하고, 존재하면 불러온다.
-        Optional<User> leaveUser = userRepository.findByEmail(dto.getUserEmail());
-        if (leaveUser.isEmpty()) {
-            String message = "User not found.";
-            logger.warn("secessionGroup:NotFoundUserEmailException. userId={}, leaveUserEmail={}\nmessage={}",
-                    user.getId(), dto.getUserEmail(), message);
+        User leaveUser;
+        if (dto.getUserEmail().isEmpty()) {
+            // 자기 자신을 탈퇴하려는 경우
+            leaveUser = user;
+        } else {
+            Optional<User> _leaveUser = userRepository.findByEmail(dto.getUserEmail());
+            if (_leaveUser.isEmpty()) {
+                String message = "User not found.";
+                logger.warn("secessionGroup:NotFoundUserEmailException. userId={}, leaveUserEmail={}\nmessage={}",
+                        user.getId(), dto.getUserEmail(), message);
 
-            throw new NotFoundUserException(message);
+                throw new NotFoundUserException(message);
+            }
+            leaveUser = _leaveUser.get();
+        }
+
+        // leaveUser가 host 유저인지 확인
+        if (group.getHostUser().getEmail().equals(leaveUser.getEmail())) {
+            String message = "A host cannot leave.";
+            logger.warn("secessionGroup:GroupMemberException. userId={}, groupId={}, leaveUserId={}\nmessage={}",
+                    user.getId(), group.getId(), leaveUser.getId(), message);
+
+            throw new GroupMemberException(message);
         }
 
         // 멤버 디비에서 불러온다.
-        Optional<GroupMember> memberUser = groupMemberRepository.findByUserAndGroup(leaveUser.get(), group);
+        Optional<GroupMember> memberUser = groupMemberRepository.findByUserAndGroup(leaveUser, group);
         if (memberUser.isEmpty()) {
             String message = "There are no users in the member list.";
             logger.warn("secessionGroup:GroupMemberException. userId={}, groupId={}, leaveUserId={}\nmessage={}",
-                    user.getId(), group.getId(), leaveUser.get().getId(), message);
+                    user.getId(), group.getId(), leaveUser.getId(), message);
 
             throw new GroupMemberException(message);
         }
