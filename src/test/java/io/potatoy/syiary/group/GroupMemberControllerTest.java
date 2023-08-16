@@ -1,7 +1,9 @@
 package io.potatoy.syiary.group;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -142,5 +144,44 @@ public class GroupMemberControllerTest {
         // then 응답 코드가 204인지 확인한다.
         result
                 .andExpect(status().isNoContent());
+    }
+
+    @DisplayName("getGroupMembers(): 그룹 멤버 리스트를 불러온다.")
+    @WithMockUser("member1@mail.com")
+    @Test
+    public void successGetGroupMembers() throws Exception {
+        // given 멤버 제거를 위한 그룹과 멤버들 생성
+        final String url = "/api/groups/{groupUri}/members";
+        final String groupName = "test_group";
+        final User hostUser = testUtil.createTestUser("host@mail.com", "host");
+        final User memberUser1 = testUtil.createTestUser("member1@mail.com", "member");
+        final User memberUser2 = testUtil.createTestUser("member2@mail.com", "member");
+        final User memberUser3 = testUtil.createTestUser("member3@mail.com", "member");
+
+        // 새로운 그룹 생성 및 멤버 추가
+        Group group = testUtil.createTestGroup(hostUser, groupName);
+        testUtil.createGroupMember(memberUser1, group);
+        testUtil.createGroupMember(memberUser2, group);
+        testUtil.createGroupMember(memberUser3, group);
+
+        // when 멤버 리스트 요청
+        ResultActions result = mockMvc.perform(get(url.replace("{groupUri}", group.getGroupUri())));
+
+        // then 응답 대용을 비교해본다.
+        result
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.hostUser.userId").value(hostUser.getId()))
+                .andExpect(jsonPath("$.hostUser.email").value(hostUser.getEmail()))
+                .andExpect(jsonPath("$.hostUser.nickname").value(hostUser.getNickname()))
+                .andExpect(jsonPath("$.memberUser[0].userId").value(memberUser1.getId()))
+                .andExpect(jsonPath("$.memberUser[0].email").value(memberUser1.getEmail()))
+                .andExpect(jsonPath("$.memberUser[0].nickname").value(memberUser1.getNickname()))
+                .andExpect(jsonPath("$.memberUser[1].userId").value(memberUser2.getId()))
+                .andExpect(jsonPath("$.memberUser[1].email").value(memberUser2.getEmail()))
+                .andExpect(jsonPath("$.memberUser[1].nickname").value(memberUser2.getNickname()))
+                .andExpect(jsonPath("$.memberUser[2].userId").value(memberUser3.getId()))
+                .andExpect(jsonPath("$.memberUser[2].email").value(memberUser3.getEmail()))
+                .andExpect(jsonPath("$.memberUser[2].nickname").value(memberUser3.getNickname()));
+
     }
 }

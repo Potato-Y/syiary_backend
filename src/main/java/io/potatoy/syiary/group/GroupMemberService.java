@@ -1,11 +1,14 @@
 package io.potatoy.syiary.group;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
+import io.potatoy.syiary.group.dto.GroupMemberResponse;
 import io.potatoy.syiary.group.dto.SecessionGroupRequest;
 import io.potatoy.syiary.group.dto.SignupGroupRequest;
 import io.potatoy.syiary.group.entity.Group;
@@ -16,6 +19,7 @@ import io.potatoy.syiary.group.exception.GroupException;
 import io.potatoy.syiary.group.exception.GroupMemberException;
 import io.potatoy.syiary.group.util.GroupMemberUtil;
 import io.potatoy.syiary.security.util.SecurityUtil;
+import io.potatoy.syiary.user.dto.UserResponse;
 import io.potatoy.syiary.user.entity.User;
 import io.potatoy.syiary.user.entity.UserRepository;
 import io.potatoy.syiary.user.exception.NotFoundUserException;
@@ -161,5 +165,48 @@ public class GroupMemberService {
         }
 
         groupMemberRepository.delete(memberUser.get());
+    }
+
+    public GroupMemberResponse getGroupMembers(String groupUri) {
+        // 유저 정보를 가져온다.
+        User user = securityUtil.getCurrentUser();
+
+        // 그룹 정보를 불러온다.
+        Optional<Group> _group = groupRepository.findByGroupUri(groupUri);
+        if (_group.isEmpty()) {
+            String message = "Group not found.";
+            logger.warn("getGroupMembers:GroupException. message={}", message);
+
+            throw new GroupException(message);
+        }
+        Group group = _group.get();
+
+        // 요청한 사람이 그룹에 속해있는지 확인한다.
+        Optional<GroupMember> _groupMember = groupMemberRepository.findByUserAndGroup(user, group);
+        if (_groupMember.isEmpty()) {
+            String message = "There are no users in the member list.";
+            logger.warn("getGroupMembers:GroupMemberException. userId={}, groupId={}\nmessage={}",
+                    user.getId(), group.getId(), message);
+
+            throw new GroupMemberException(message);
+        }
+
+        List<GroupMember> groupMembers = groupMemberRepository.findAllByGroup(group);
+
+        User hostUser = group.getHostUser();
+        UserResponse hostUserResponse = new UserResponse(hostUser.getId(), hostUser.getEmail(), hostUser.getNickname());
+
+        ArrayList<UserResponse> memberUserResponses = new ArrayList<>();
+        for (GroupMember groupMember : groupMembers) {
+            if (group.getHostUser().getEmail().equals(groupMember.getUser().getEmail())) {
+                // Host 유저는 따로 추가한다.
+                continue;
+            }
+
+            memberUserResponses.add(new UserResponse(groupMember.getUser().getId(), groupMember.getUser().getEmail(),
+                    groupMember.getUser().getNickname()));
+        }
+
+        return new GroupMemberResponse(hostUserResponse, memberUserResponses);
     }
 }
