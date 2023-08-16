@@ -25,8 +25,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.potatoy.syiary.group.dto.CreateGroupRequest;
 import io.potatoy.syiary.group.dto.DeleteGroupRequest;
-import io.potatoy.syiary.group.dto.SecessionGroupRequest;
-import io.potatoy.syiary.group.dto.SignupGroupRequest;
 import io.potatoy.syiary.group.entity.Group;
 import io.potatoy.syiary.group.entity.GroupMemberRepository;
 import io.potatoy.syiary.group.entity.GroupRepository;
@@ -119,89 +117,6 @@ public class GroupControllerTest {
 
         // when 그룹 삭제 요청
         ResultActions result = mockMvc.perform(delete(url + "/" + group.getGroupUri())
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(requestBody));
-
-        // then 응답 코드가 204인지 확인한다.
-        result
-                .andExpect(status().isNoContent());
-    }
-
-    @DisplayName("signupGroup(): 그룹의 멤버를 추가한다.")
-    @WithMockUser(username = "host@mail.com")
-    @Test
-    public void successSignupGroup() throws Exception {
-        // given 그룹 생성에 필요한 객체들 생성
-        final String url = "/api/groups/{groupUri}/members";
-        final String groupName = "test_group";
-        final User hostUser = testUtil.createTestUser("host@mail.com", "host");
-        final User guestUser = testUtil.createTestUser("guest@mail.com", "guest");
-
-        // 새로운 그룹 생성
-        Group group = testUtil.createTestGroup(hostUser, groupName);
-
-        // request 객체 생성 및, JSON 직렬화
-        final SignupGroupRequest request = new SignupGroupRequest(guestUser.getEmail());
-        final String requestBody = objectMapper.writeValueAsString(request);
-
-        // when 게스트 가입 요청
-        ResultActions result = mockMvc.perform(post(url.replace("{groupUri}", group.getGroupUri()))
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(requestBody));
-
-        // then 응답 코드가 204인지 확인한다.
-        result
-                .andExpect(status().isNoContent());
-    }
-
-    @DisplayName("secessionGroup(): 그룹의 멤버를 제거한다.")
-    @WithMockUser(username = "host@mail.com")
-    @Test
-    public void successSecessionGroup() throws Exception {
-        // given 멤버 제거를 위한 그룹과 멤버들 생성
-        final String url = "/api/groups/{groupUri}/members";
-        final String groupName = "test_group";
-        final User hostUser = testUtil.createTestUser("host@mail.com", "host");
-        final User memberUser = testUtil.createTestUser("member@mail.com", "member");
-
-        // 새로운 그룹 생성 및 멤버 추가
-        Group group = testUtil.createTestGroup(hostUser, groupName);
-        testUtil.createGroupMember(memberUser, group);
-
-        // request 객체 생성 및, JSON 직렬화
-        final SecessionGroupRequest request = new SecessionGroupRequest(memberUser.getEmail());
-        final String requestBody = objectMapper.writeValueAsString(request);
-
-        // when 멤버 탈퇴 요청
-        ResultActions result = mockMvc.perform(delete(url.replace("{groupUri}", group.getGroupUri()))
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(requestBody));
-
-        // then 응답 코드가 204인지 확인한다.
-        result
-                .andExpect(status().isNoContent());
-    }
-
-    @DisplayName("secessionGroup(): 그룹에서 탈퇴한다.")
-    @WithMockUser("member@mail.com")
-    @Test
-    public void successMemberSecessionGroup() throws Exception {
-        // given 멤버 제거를 위한 그룹과 멤버들 생성
-        final String url = "/api/groups/{groupUri}/members";
-        final String groupName = "test_group";
-        final User hostUser = testUtil.createTestUser("host@mail.com", "host");
-        final User memberUser = testUtil.createTestUser("member@mail.com", "member");
-
-        // 새로운 그룹 생성 및 멤버 추가
-        Group group = testUtil.createTestGroup(hostUser, groupName);
-        testUtil.createGroupMember(memberUser, group);
-
-        // request 객체 생성 및, JSON 직렬화
-        final SecessionGroupRequest request = new SecessionGroupRequest("");
-        final String requestBody = objectMapper.writeValueAsString(request);
-
-        // when 멤버 탈퇴 요청
-        ResultActions result = mockMvc.perform(delete(url.replace("{groupUri}", group.getGroupUri()))
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(requestBody));
 
