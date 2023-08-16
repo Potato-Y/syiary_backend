@@ -47,12 +47,6 @@ public class GroupController {
         return ResponseEntity.status(HttpStatus.OK).body(group);
     }
 
-    // @GetMapping("/groups/{groupUri}/members") // 그룹에 참여중인 멤버 가져오기
-    // public ResponseEntity<String> getGroupMembers(@PathVariable String groupUri)
-    // {
-
-    // }
-
     @DeleteMapping("/groups/{groupUri}") // 그룹 삭제
     public ResponseEntity<String> deleteGroup(@PathVariable String groupUri,
             @Validated @RequestBody DeleteGroupRequest request) {
