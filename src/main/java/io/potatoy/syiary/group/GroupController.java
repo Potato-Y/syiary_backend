@@ -17,8 +17,6 @@ import io.potatoy.syiary.group.dto.CreateGroupRequest;
 import io.potatoy.syiary.group.dto.CreateGroupResponse;
 import io.potatoy.syiary.group.dto.DeleteGroupRequest;
 import io.potatoy.syiary.group.dto.GroupInfoResponse;
-import io.potatoy.syiary.group.dto.SecessionGroupRequest;
-import io.potatoy.syiary.group.dto.SignupGroupRequest;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -49,21 +47,11 @@ public class GroupController {
         return ResponseEntity.status(HttpStatus.OK).body(group);
     }
 
-    @PostMapping("/groups/{groupUri}/members") // 그룹에 유저 추가
-    public ResponseEntity<String> signupGroup(@PathVariable String groupUri,
-            @Validated @RequestBody SignupGroupRequest request) {
-        groupService.signupGroup(groupUri, request);
+    // @GetMapping("/groups/{groupUri}/members") // 그룹에 참여중인 멤버 가져오기
+    // public ResponseEntity<String> getGroupMembers(@PathVariable String groupUri)
+    // {
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-    }
-
-    @DeleteMapping("/groups/{groupUri}/members") // 그룹에서 멤버 탈퇴
-    public ResponseEntity<String> secessionGroup(@PathVariable String groupUri,
-            @Validated @RequestBody SecessionGroupRequest request) {
-        groupService.secessionGroup(groupUri, request);
-
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-    }
+    // }
 
     @DeleteMapping("/groups/{groupUri}") // 그룹 삭제
     public ResponseEntity<String> deleteGroup(@PathVariable String groupUri,
