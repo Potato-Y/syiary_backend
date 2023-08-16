@@ -10,7 +10,6 @@ import io.potatoy.syiary.group.entity.Group;
 import io.potatoy.syiary.group.entity.GroupMember;
 import io.potatoy.syiary.group.entity.GroupMemberRepository;
 import io.potatoy.syiary.group.exception.GroupMemberException;
-import io.potatoy.syiary.post.PostService;
 import io.potatoy.syiary.user.entity.User;
 import lombok.RequiredArgsConstructor;
 

@@ -1,6 +1,5 @@
 package io.potatoy.syiary.group.dto;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
