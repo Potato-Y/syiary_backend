@@ -1,10 +1,15 @@
 package io.potatoy.syiary.post;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import io.potatoy.syiary.group.entity.Group;
@@ -14,6 +19,8 @@ import io.potatoy.syiary.group.util.GroupUtil;
 import io.potatoy.syiary.post.dto.CreatePostRequest;
 import io.potatoy.syiary.post.dto.CreatePostResponse;
 import io.potatoy.syiary.post.dto.FixPostRequest;
+import io.potatoy.syiary.post.dto.GetPostListRequest;
+import io.potatoy.syiary.post.dto.PostResponse;
 import io.potatoy.syiary.post.entity.Post;
 import io.potatoy.syiary.post.entity.PostFile;
 import io.potatoy.syiary.post.entity.PostFileRepository;
@@ -22,6 +29,7 @@ import io.potatoy.syiary.post.exception.PostException;
 import io.potatoy.syiary.post.handler.FileHandler;
 import io.potatoy.syiary.post.util.PostUtil;
 import io.potatoy.syiary.security.util.SecurityUtil;
+import io.potatoy.syiary.user.dto.UserResponse;
 import io.potatoy.syiary.user.entity.User;
 import lombok.RequiredArgsConstructor;
 
@@ -37,6 +45,63 @@ public class PostService {
     private final SecurityUtil securityUtil;
     private final GroupUtil groupUtil;
     private final PostUtil postUtil;
+
+    /**
+     * 사용자가 그룹의 최신 목록을 불러온다.
+     * 
+     * @param groupUri
+     * @param dto
+     * @return
+     */
+    public List<PostResponse> getList(String groupUri, GetPostListRequest dto) {
+        User user = securityUtil.getCurrentUser();
+        int page = dto.getPage();
+
+        // 그룹 정보를 불러온다.
+        Optional<Group> _group = groupRepository.findByGroupUri(groupUri);
+        if (_group.isEmpty()) {
+            String message = "Group not found.";
+            logger.warn("deleteGroup:GroupException. message={}", message);
+
+            throw new GroupException(message);
+        }
+
+        Group group = _group.get();
+
+        groupUtil.checkGroupUser(user, group); // 사용자가 그룹에 포함되어 있는지 확인
+
+        // 요청된 page에 맞추어 post를 불러온다.
+        Sort sort = Sort.by(Sort.Order.desc("createdAt"));
+        Pageable pageable = PageRequest.of(page, 5, sort);
+        Page<Post> postPage = postRepository.findAllByGroup(group, pageable);
+        List<Post> posts = postPage.getContent();
+
+        List<PostResponse> postResponses = new ArrayList<>();
+        for (Post post : posts) {
+            // 작성자 정보 가져오기
+            UserResponse createUser = new UserResponse(post.getUser().getId(), post.getUser().getEmail(),
+                    post.getGroup().getGroupUri());
+
+            // file의 데이터 리스트화 시키기
+            List<byte[]> files = new ArrayList<>();
+            for (PostFile postFile : post.getFiles()) {
+                try {
+                    byte[] file = fileHandler.getFile(group.getId(), post.getId(), postFile.getFileName());
+                    if (file != null) {
+                        files.add(file);
+                    }
+                } catch (Exception e) {
+                    logger.warn("PostService:getList. message={}", e.getMessage());
+                }
+            }
+
+            postResponses.add(new PostResponse(post.getId(), post.getCreatedAt(), post.getUpdatedAt(), createUser,
+                    post.getContent(), files));
+        }
+
+        logger.info("getList. userId={}, groupId={}", user.getId(), group.getId());
+        return postResponses;
+    }
 
     /**
      * 새로운 포스터 작성(추가)

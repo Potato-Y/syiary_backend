@@ -118,4 +118,31 @@ public class FileHandler {
         File file = new File(filePath);
         file.delete();
     }
+
+    /**
+     * 이미지 파일을 byte로 반환
+     * 
+     * @param groupId
+     * @param postId
+     * @param fileName
+     * @return
+     */
+    public byte[] getFile(Long groupId, Long postId, String fileName) {
+        // 프로젝트 폴더에 저장하기 위해 절대 경로를 설정 (window의 Tomcat은 temp 파일 이용)
+        String absolutePath = new File("").getAbsolutePath() + "/";
+
+        // 경로를 지정, 해당 경로에 저장
+        String path = "files/" + Long.toString(groupId) + "/" + Long.toString(postId) + "/" + fileName;
+        File file = new File(absolutePath + path); // 해당 파일을 불러온다.
+
+        byte[] fileByte = null;
+
+        try {
+            fileByte = FileCopyUtils.copyToByteArray(file);
+        } catch (IOException e) {
+            logger.warn("getFile. Not found. message={}", e.getMessage());
+        }
+
+        return fileByte;
+    }
 }

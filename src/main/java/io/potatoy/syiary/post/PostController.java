@@ -1,9 +1,12 @@
 package io.potatoy.syiary.post;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import io.potatoy.syiary.post.dto.CreatePostRequest;
 import io.potatoy.syiary.post.dto.CreatePostResponse;
 import io.potatoy.syiary.post.dto.FixPostRequest;
+import io.potatoy.syiary.post.dto.GetPostListRequest;
+import io.potatoy.syiary.post.dto.PostResponse;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -22,6 +27,13 @@ import lombok.RequiredArgsConstructor;
 public class PostController {
 
     private final PostService postService;
+
+    @GetMapping("/{groupUri}/posts")
+    public ResponseEntity<List<PostResponse>> getPostList(@PathVariable String groupUri, GetPostListRequest request) {
+        List<PostResponse> postResponses = postService.getList(groupUri, request);
+
+        return ResponseEntity.status(HttpStatus.OK).body(postResponses);
+    }
 
     @PostMapping("/{groupUri}/posts") // 포스트 추가
     public ResponseEntity<CreatePostResponse> createPost(
