@@ -32,13 +32,13 @@ public class PostFile {
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @Column(name = "url", nullable = false)
-    private String fileUrl;
+    @Column(name = "file_name", nullable = false)
+    private String fileName;
 
     @Builder
-    public PostFile(FileType fileType, Post post, String fileUrl) {
+    public PostFile(FileType fileType, Post post, String fileName) {
         this.fileType = fileType;
         this.post = post;
-        this.fileUrl = fileUrl;
+        this.fileName = fileName;
     }
 }

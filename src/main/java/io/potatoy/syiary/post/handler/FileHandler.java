@@ -1,6 +1,7 @@
 package io.potatoy.syiary.post.handler;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,6 +10,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -92,7 +94,7 @@ public class FileHandler {
                 PostFile postFile = PostFile.builder()
                         .post(post)
                         .fileType(fileType)
-                        .fileUrl(newFileName)
+                        .fileName(newFileName)
                         .build();
 
                 postFileList.add(postFile);
@@ -111,7 +113,7 @@ public class FileHandler {
         // 프로젝트 폴더에 저장하기 위해 절대 경로를 설정 (window의 Tomcat은 temp 파일 이용)
         String absolutePath = new File("").getAbsolutePath() + "/";
         final String filePath = absolutePath + "files/" + postFile.getPost().getGroup().getId() + "/"
-                + postFile.getPost().getId() + "/" + postFile.getFileUrl();
+                + postFile.getPost().getId() + "/" + postFile.getFileName();
 
         File file = new File(filePath);
         file.delete();
