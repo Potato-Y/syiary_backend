@@ -48,7 +48,7 @@ public class FileHandler {
 
         // 경로를 지정, 해당 경로에 저장
         String path = "files/" + Long.toString(group.getId()) + "/" + Long.toString(post.getId());
-        File file = new File(path);
+        File file = new File(absolutePath + path);
         // 저장할 위치의 디렉토리가 존재하지 않을 경우 생성
 
         if (!file.exists()) {
