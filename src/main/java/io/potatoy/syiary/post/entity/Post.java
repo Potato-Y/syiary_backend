@@ -43,7 +43,7 @@ public class Post {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "group_id", nullable = false, updatable = false)
     private Group group; // post를 올릴 group
 
@@ -54,7 +54,7 @@ public class Post {
     @Column(name = "content")
     private String content;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<PostFile> files = new ArrayList<>();
 
     @Builder

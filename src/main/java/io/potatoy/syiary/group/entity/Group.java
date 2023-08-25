@@ -1,12 +1,16 @@
 package io.potatoy.syiary.group.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import io.potatoy.syiary.enums.State;
+import io.potatoy.syiary.post.entity.Post;
 import io.potatoy.syiary.user.entity.User;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -17,6 +21,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -52,6 +57,9 @@ public class Group {
     @CreatedDate // 엔티티가 생성될 때 생성 시간 저장
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = "group", cascade = CascadeType.REMOVE)
+    private List<Post> posts = new ArrayList<>();
 
     @Builder
     public Group(String groupUri, String groupName, User hostUser, State state) {

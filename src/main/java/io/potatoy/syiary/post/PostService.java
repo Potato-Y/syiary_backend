@@ -208,19 +208,20 @@ public class PostService {
 
         Group group = _group.get();
 
-        Optional<Post> post = postRepository.findById(postId);
+        Optional<Post> _post = postRepository.findById(postId);
 
         // 포스트가 없는지 확인한다.
-        if (post.isEmpty()) {
+        if (_post.isEmpty()) {
             String message = "There are no posts.";
 
             logger.warn("fixPost:PostException. userId={}, groupId={}, postId={}\nmessage={}", user.getId(),
                     group.getId(), postId, message);
             throw new PostException(message);
         }
+        Post post = _post.get();
 
         // 삭제 권한이 있는 유저인지 확인한다.
-        Boolean authority = postUtil.checkDeleteAuthority(user, group, post.get());
+        Boolean authority = postUtil.checkDeleteAuthority(user, group, post);
         if (authority == false) {
             String message = "You do not have permission to delete posts.";
 
@@ -229,7 +230,14 @@ public class PostService {
             throw new PostException(groupUri);
         }
 
-        postRepository.delete(post.get());
+        // 포스트에 해당하는 파일들도 모두 삭제한다.
+        List<PostFile> postFiles = postFileRepository.findAllByPost(post);
+
+        for (PostFile postFile : postFiles) {
+            fileHandler.deleteFile(postFile);
+        }
+
+        postRepository.delete(post);
     }
 
     /**
@@ -249,5 +257,6 @@ public class PostService {
             }
         }
 
+        postRepository.deleteAll(posts);
     }
 }
