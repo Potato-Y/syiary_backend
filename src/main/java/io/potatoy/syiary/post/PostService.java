@@ -80,7 +80,7 @@ public class PostService {
         for (Post post : posts) {
             // 작성자 정보 가져오기
             UserResponse createUser = new UserResponse(post.getUser().getId(), post.getUser().getEmail(),
-                    post.getGroup().getGroupUri());
+                    post.getUser().getNickname());
 
             // file의 데이터 리스트화 시키기
             List<byte[]> files = new ArrayList<>();
