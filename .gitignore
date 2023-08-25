@@ -1,5 +1,6 @@
 # 직접 추가
 files/**
+files_local/**
 
 # Created by https://www.toptal.com/developers/gitignore/api/java,gradle,windows,macos,linux,intellij,visualstudiocode,kotlin
 # Edit at https://www.toptal.com/developers/gitignore?templates=java,gradle,windows,macos,linux,intellij,visualstudiocode,kotlin
