@@ -1,4 +1,4 @@
-package io.potatoy.syiary.controller;
+package io.potatoy.syiary.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.potatoy.syiary.user.dto.AddUserRequest;

@@ -1,4 +1,4 @@
-package io.potatoy.syiary.controller;
+package io.potatoy.syiary.token;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
