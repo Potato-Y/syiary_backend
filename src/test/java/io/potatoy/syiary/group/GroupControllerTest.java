@@ -1,5 +1,6 @@
 package io.potatoy.syiary.group;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -123,6 +124,9 @@ public class GroupControllerTest {
         // then 응답 코드가 204인지 확인한다.
         result
                 .andExpect(status().isNoContent());
+
+        // TODO 그룹 포스트가 있는 상태에서도 그룹 삭제가 정상적으로 작동하는지 확인
+        assertThat(groupRepository.findAll().size()).isZero();
     }
 
     @DisplayName("getGroupInfo(): 그룹 정보 가져오기")
