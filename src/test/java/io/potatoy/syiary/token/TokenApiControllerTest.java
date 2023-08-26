@@ -36,127 +36,127 @@ import io.potatoy.syiary.user.entity.UserRepository;
 @ActiveProfiles("local")
 public class TokenApiControllerTest {
 
-        @Autowired
-        protected MockMvc mockMvc;
-        @Autowired
-        protected ObjectMapper objectMapper; // JSON 직렬화, 역직렬화를 위한 클래스
-        @Autowired
-        private WebApplicationContext context;
-        @Autowired
-        JwtProperties jwtProperties;
-        @Autowired
-        UserRepository userRepository;
-        @Autowired
-        RefreshTokenRepository refreshTokenRepository;
-        @Autowired
-        BCryptPasswordEncoder bCryptPasswordEncoder;
-        @Autowired
-        TokenProvider tokenProvider;
+    @Autowired
+    protected MockMvc mockMvc;
+    @Autowired
+    protected ObjectMapper objectMapper; // JSON 직렬화, 역직렬화를 위한 클래스
+    @Autowired
+    private WebApplicationContext context;
+    @Autowired
+    JwtProperties jwtProperties;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    RefreshTokenRepository refreshTokenRepository;
+    @Autowired
+    BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    TokenProvider tokenProvider;
 
-        @BeforeEach
-        public void mockMvcSetup() {
-                this.mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
-                userRepository.deleteAll();
-                refreshTokenRepository.deleteAll();
-        }
+    @BeforeEach
+    public void mockMvcSetup() {
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
+        userRepository.deleteAll();
+        refreshTokenRepository.deleteAll();
+    }
 
-        @DisplayName("authenticate(): 로그인 성공")
-        @Test
-        public void successAuthentication() throws Exception {
-                // given 로그인에 필요한 객체들 생성
-                final String url = "/api/authenticate";
-                final String email = "user@mail.com";
-                final String password = "test";
+    @DisplayName("authenticate(): 로그인 성공")
+    @Test
+    public void successAuthentication() throws Exception {
+        // given 로그인에 필요한 객체들 생성
+        final String url = "/api/authenticate";
+        final String email = "user@mail.com";
+        final String password = "test";
 
-                userRepository.save(User.builder()
-                                .email(email)
-                                .password(bCryptPasswordEncoder.encode(password))
-                                .build());
+        userRepository.save(User.builder()
+                .email(email)
+                .password(bCryptPasswordEncoder.encode(password))
+                .build());
 
-                AuthenticateRequest request = new AuthenticateRequest();
-                request.setEmail(email);
-                request.setPassword(password);
+        AuthenticateRequest request = new AuthenticateRequest();
+        request.setEmail(email);
+        request.setPassword(password);
 
-                // 객체 JSON으로 직렬화
-                final String requestBody = objectMapper.writeValueAsString(request);
+        // 객체 JSON으로 직렬화
+        final String requestBody = objectMapper.writeValueAsString(request);
 
-                // when 로그인에 요청
-                ResultActions resultActions = mockMvc.perform(post(url)
-                                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                .content(requestBody));
+        // when 로그인에 요청
+        ResultActions resultActions = mockMvc.perform(post(url)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(requestBody));
 
-                // then 응답 코드가 200인지 확인, 값들이 전부 잘 들어왔는지 확인.
-                resultActions
-                                .andExpect(status().isOk())
-                                .andExpect(jsonPath("$.accessToken").isNotEmpty())
-                                .andExpect(jsonPath("$.refreshToken").isNotEmpty());
-        }
+        // then 응답 코드가 200인지 확인, 값들이 전부 잘 들어왔는지 확인.
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.accessToken").isNotEmpty())
+                .andExpect(jsonPath("$.refreshToken").isNotEmpty());
+    }
 
-        // @DisplayName("authenticate(): 로그인 실패")
-        // @Test
-        // public void failAuthentication() throws Exception {
-        // // given 로그인에 필요한 객체들 생성
-        // final String url = "/api/authenticate";
-        // final String email = "user@mail.com";
-        // final String password = "test";
+    // @DisplayName("authenticate(): 로그인 실패")
+    // @Test
+    // public void failAuthentication() throws Exception {
+    // // given 로그인에 필요한 객체들 생성
+    // final String url = "/api/authenticate";
+    // final String email = "user@mail.com";
+    // final String password = "test";
 
-        // userRepository.save(User.builder()
-        // .email(email)
-        // .password(bCryptPasswordEncoder.encode(password))
-        // .build());
+    // userRepository.save(User.builder()
+    // .email(email)
+    // .password(bCryptPasswordEncoder.encode(password))
+    // .build());
 
-        // AuthenticateRequest request = new AuthenticateRequest();
-        // request.setEmail(email);
-        // request.setPassword(password + "_"); // 틀린 비밀번호 넣기
+    // AuthenticateRequest request = new AuthenticateRequest();
+    // request.setEmail(email);
+    // request.setPassword(password + "_"); // 틀린 비밀번호 넣기
 
-        // // 객체 JSON으로 직렬화
-        // final String requestBody = objectMapper.writeValueAsString(request);
+    // // 객체 JSON으로 직렬화
+    // final String requestBody = objectMapper.writeValueAsString(request);
 
-        // // when 로그인에 요청
-        // ResultActions result = this.mockMvc.perform(post(url)
-        // .contentType(MediaType.APPLICATION_JSON_VALUE)
-        // .content(requestBody));
+    // // when 로그인에 요청
+    // ResultActions result = this.mockMvc.perform(post(url)
+    // .contentType(MediaType.APPLICATION_JSON_VALUE)
+    // .content(requestBody));
 
-        // result.andExpect(status().isForbidden());
-        // }
+    // result.andExpect(status().isForbidden());
+    // }
 
-        @DisplayName("token(): refresh token을 통해 새로운 access token 발급")
-        @Test
-        public void token() throws Exception {
-                // given 토큰을 통한 로그인에 필요한 객체들 생성
-                final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(14);
-                final Duration ACCESS_TOKEN_DURATION = Duration.ofDays(1);
+    @DisplayName("token(): refresh token을 통해 새로운 access token 발급")
+    @Test
+    public void token() throws Exception {
+        // given 토큰을 통한 로그인에 필요한 객체들 생성
+        final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(14);
+        final Duration ACCESS_TOKEN_DURATION = Duration.ofDays(1);
 
-                final String url = "/api/token";
-                final String email = "user@mail.com";
-                final String password = "test";
+        final String url = "/api/token";
+        final String email = "user@mail.com";
+        final String password = "test";
 
-                User testUser = userRepository.save(User.builder()
-                                .email(email)
-                                .password(bCryptPasswordEncoder.encode(password))
-                                .build());
+        User testUser = userRepository.save(User.builder()
+                .email(email)
+                .password(bCryptPasswordEncoder.encode(password))
+                .build());
 
-                // token set 생성
-                final String accessToken = tokenProvider.generateToken(testUser, ACCESS_TOKEN_DURATION);
-                final String refreshToken = tokenProvider.generateToken(testUser, REFRESH_TOKEN_DURATION);
+        // token set 생성
+        final String accessToken = tokenProvider.generateToken(testUser, ACCESS_TOKEN_DURATION);
+        final String refreshToken = tokenProvider.generateToken(testUser, REFRESH_TOKEN_DURATION);
 
-                refreshTokenRepository.save(new RefreshToken(testUser.getId(), refreshToken)); // refresh token 저장
+        refreshTokenRepository.save(new RefreshToken(testUser.getId(), refreshToken)); // refresh token 저장
 
-                final TokenRequest tokenRequest = new TokenRequest();
-                tokenRequest.setAccessToken(accessToken);
-                tokenRequest.setRefreshToken(refreshToken);
+        final TokenRequest tokenRequest = new TokenRequest();
+        tokenRequest.setAccessToken(accessToken);
+        tokenRequest.setRefreshToken(refreshToken);
 
-                // 객체 JSON 직렬화
-                final String requestBody = objectMapper.writeValueAsString(tokenRequest);
+        // 객체 JSON 직렬화
+        final String requestBody = objectMapper.writeValueAsString(tokenRequest);
 
-                // when 새로운 access token 요청을 보낸다.
-                ResultActions result = mockMvc.perform(post(url)
-                                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                .content(requestBody));
+        // when 새로운 access token 요청을 보낸다.
+        ResultActions result = mockMvc.perform(post(url)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(requestBody));
 
-                // then 응답코드 확인
-                result
-                                .andExpect(status().isOk())
-                                .andExpect(jsonPath("$.accessToken").isNotEmpty());
-        }
+        // then 응답코드 확인
+        result
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.accessToken").isNotEmpty());
+    }
 }
