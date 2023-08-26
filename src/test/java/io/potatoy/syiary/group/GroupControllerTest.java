@@ -29,9 +29,10 @@ import io.potatoy.syiary.group.dto.DeleteGroupRequest;
 import io.potatoy.syiary.group.entity.Group;
 import io.potatoy.syiary.group.entity.GroupMemberRepository;
 import io.potatoy.syiary.group.entity.GroupRepository;
+import io.potatoy.syiary.group.util.TestGroupUtil;
 import io.potatoy.syiary.user.entity.User;
 import io.potatoy.syiary.user.entity.UserRepository;
-import io.potatoy.syiary.util.TestUtil;
+import io.potatoy.syiary.user.util.TestUserUtil;
 
 @SpringBootTest // 테스트용 애플리케이션 컨텍스트
 @AutoConfigureMockMvc // MockMvc 생성
@@ -53,7 +54,8 @@ public class GroupControllerTest {
     @Autowired
     GroupMemberRepository groupMemberRepository;
 
-    TestUtil testUtil;
+    TestUserUtil testUserUtil;
+    TestGroupUtil testGroupUtil;
 
     @BeforeEach
     public void mockMvcSetup() {
@@ -61,7 +63,8 @@ public class GroupControllerTest {
         groupMemberRepository.deleteAll();
         groupRepository.deleteAll();
         userRepository.deleteAll();
-        testUtil = new TestUtil(bCryptPasswordEncoder, userRepository, groupRepository, groupMemberRepository);
+        this.testUserUtil = new TestUserUtil(bCryptPasswordEncoder, userRepository);
+        this.testGroupUtil = new TestGroupUtil(groupRepository, groupMemberRepository);
     }
 
     @DisplayName("createGroup(): 그룹 만들기 성공")
@@ -74,7 +77,7 @@ public class GroupControllerTest {
         final String password = "host";
         final String groupName = "test_group";
 
-        testUtil.createTestUser(email, password);
+        testUserUtil.createTestUser(email, password);
 
         CreateGroupRequest request = new CreateGroupRequest();
         request.setGroupName(groupName);
@@ -106,10 +109,10 @@ public class GroupControllerTest {
         final String groupName = "test_group";
 
         // 새로운 유저 생성
-        User user = testUtil.createTestUser(email, password);
+        User user = testUserUtil.createTestUser(email, password);
 
         // 새로운 그룹 생성
-        Group group = testUtil.createTestGroup(user, groupName);
+        Group group = testGroupUtil.createTestGroup(user, groupName);
 
         final DeleteGroupRequest request = new DeleteGroupRequest(groupName);
 
@@ -136,10 +139,10 @@ public class GroupControllerTest {
         // given 그룹 정보를 받아오기 위한 그룹 생성
         final String url = "/api/groups/{groupUri}";
         final String groupName = "test_group";
-        final User hostUser = testUtil.createTestUser("host@mail.com", "host");
+        final User hostUser = testUserUtil.createTestUser("host@mail.com", "host");
 
         // 새로운 그룹 생성
-        Group group = testUtil.createTestGroup(hostUser, groupName);
+        Group group = testGroupUtil.createTestGroup(hostUser, groupName);
 
         // when 요청
         ResultActions result = mockMvc.perform(get(url.replace("{groupUri}", group.getGroupUri())));
@@ -165,16 +168,16 @@ public class GroupControllerTest {
         final String url = "/api/groups";
         final String groupName1 = "test_group_1";
         final String groupName2 = "test_group_2";
-        final User hostUser = testUtil.createTestUser("host@mail.com", "host");
-        final User memberUser = testUtil.createTestUser("member@mail.com", "member");
+        final User hostUser = testUserUtil.createTestUser("host@mail.com", "host");
+        final User memberUser = testUserUtil.createTestUser("member@mail.com", "member");
 
         // 새로운 그룹 생성 및 멤버 추가
-        final Group group1 = testUtil.createTestGroup(hostUser, groupName1);
-        final Group group2 = testUtil.createTestGroup(hostUser, groupName2);
+        final Group group1 = testGroupUtil.createTestGroup(hostUser, groupName1);
+        final Group group2 = testGroupUtil.createTestGroup(hostUser, groupName2);
 
         // 그룹에 가입
-        testUtil.createGroupMember(memberUser, group1);
-        testUtil.createGroupMember(memberUser, group2);
+        testGroupUtil.createGroupMember(group1, memberUser);
+        testGroupUtil.createGroupMember(group2, memberUser);
 
         // when 요청
         ResultActions result = mockMvc.perform(get(url));

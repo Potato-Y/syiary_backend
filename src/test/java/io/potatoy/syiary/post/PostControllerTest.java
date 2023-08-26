@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.potatoy.syiary.group.entity.Group;
 import io.potatoy.syiary.group.entity.GroupMemberRepository;
 import io.potatoy.syiary.group.entity.GroupRepository;
+import io.potatoy.syiary.group.util.TestGroupUtil;
 import io.potatoy.syiary.post.entity.Post;
 import io.potatoy.syiary.post.entity.PostFileRepository;
 import io.potatoy.syiary.post.entity.PostRepository;
@@ -34,7 +35,7 @@ import io.potatoy.syiary.post.handler.TestFileHandler;
 import io.potatoy.syiary.post.util.TestPostUtil;
 import io.potatoy.syiary.user.entity.User;
 import io.potatoy.syiary.user.entity.UserRepository;
-import io.potatoy.syiary.util.TestUtil;
+import io.potatoy.syiary.user.util.TestUserUtil;
 
 @SpringBootTest // 테스트용 애플리케이션 컨텍스트
 @AutoConfigureMockMvc // MockMvc 생성
@@ -60,7 +61,8 @@ public class PostControllerTest {
     @Autowired
     PostFileRepository postFileRepository;
 
-    TestUtil testUtil;
+    TestUserUtil testUserUtil;
+    TestGroupUtil testGroupUtil;
     TestPostUtil testPostUtil;
 
     @BeforeEach
@@ -71,9 +73,9 @@ public class PostControllerTest {
         groupMemberRepository.deleteAll();
         groupRepository.deleteAll();
         userRepository.deleteAll();
-        testUtil = new TestUtil(bCryptPasswordEncoder, userRepository,
-                groupRepository, groupMemberRepository);
-        testPostUtil = new TestPostUtil(postRepository, postFileRepository);
+        this.testUserUtil = new TestUserUtil(bCryptPasswordEncoder, userRepository);
+        this.testGroupUtil = new TestGroupUtil(groupRepository, groupMemberRepository);
+        this.testPostUtil = new TestPostUtil(postRepository, postFileRepository);
     }
 
     @DisplayName("getPostList(): 목록 불러오기")
@@ -87,16 +89,16 @@ public class PostControllerTest {
         // host 생성
         final String hostEmail = "host@mail.com";
         final String hostPassword = "host";
-        User hostUser = testUtil.createTestUser(hostEmail, hostPassword);
+        User hostUser = testUserUtil.createTestUser(hostEmail, hostPassword);
 
         // member 생성
         final String memberEmail = "member@mail.com";
         final String memberPassword = "member";
-        User memberUser = testUtil.createTestUser(memberEmail, memberPassword);
+        User memberUser = testUserUtil.createTestUser(memberEmail, memberPassword);
 
         // group 생성 및 멤버 추가
-        Group group = testUtil.createTestGroup(hostUser, groupName);
-        testUtil.createGroupMember(memberUser, group);
+        Group group = testGroupUtil.createTestGroup(hostUser, groupName);
+        testGroupUtil.createGroupMember(group, memberUser);
 
         // post 생성
         final String postContent = "test post";
@@ -108,11 +110,11 @@ public class PostControllerTest {
         Post post1 = testPostUtil.createPost(group, hostUser, postContent, files);
         Post post2 = testPostUtil.createPost(group, memberUser, postContent, files);
 
-        // /// when post 목록 요청 ///
+        /// when post 목록 요청 ///
         ResultActions result = mockMvc.perform(get(url.replace("{groupUri}",
                 group.getGroupUri())));
 
-        // /// then 결과 확인
+        /// then 결과 확인
         result
                 .andExpect(status().isOk())
                 // 포스트는 등록 역순이다.

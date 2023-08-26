@@ -1,8 +1,6 @@
-package io.potatoy.syiary.util;
+package io.potatoy.syiary.group.util;
 
 import java.util.Optional;
-
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import io.potatoy.syiary.enums.State;
 import io.potatoy.syiary.group.entity.Group;
@@ -10,33 +8,25 @@ import io.potatoy.syiary.group.entity.GroupMember;
 import io.potatoy.syiary.group.entity.GroupMemberRepository;
 import io.potatoy.syiary.group.entity.GroupRepository;
 import io.potatoy.syiary.user.entity.User;
-import io.potatoy.syiary.user.entity.UserRepository;
+import io.potatoy.syiary.util.UriMaker;
 
-public class TestUtil {
+public class TestGroupUtil {
 
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
-    private UserRepository userRepository;
     private GroupRepository groupRepository;
     private GroupMemberRepository groupMemberRepository;
 
-    public TestUtil(BCryptPasswordEncoder bCryptPasswordEncoder, UserRepository userRepository,
-            GroupRepository groupRepository,
-            GroupMemberRepository groupMemberRepository) {
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.userRepository = userRepository;
+    public TestGroupUtil(GroupRepository groupRepository, GroupMemberRepository groupMemberRepository) {
         this.groupRepository = groupRepository;
         this.groupMemberRepository = groupMemberRepository;
     }
 
-    public User createTestUser(String email, String password) {
-        User user = userRepository.save(User.builder()
-                .email(email)
-                .password(bCryptPasswordEncoder.encode(password))
-                .build());
-
-        return user;
-    }
-
+    /**
+     * 새로운 테스트 그룹 생성하고 필드에 저장한다.
+     * 
+     * @param hostUser
+     * @param groupName
+     * @return
+     */
     public Group createTestGroup(User hostUser, String groupName) {
         UriMaker groupUriMaker = new UriMaker(); // 그룹 id를 만들기 위해
         String groupUri;
@@ -63,15 +53,22 @@ public class TestUtil {
                         .build());
 
         // 그룹 멤버 추가
-        groupMemberRepository.save(createGroupMember(hostUser, group));
+        groupMemberRepository.save(createGroupMember(group, hostUser));
 
         return group;
     }
 
-    public GroupMember createGroupMember(User user, Group group) {
+    /**
+     * 그룹에 새로운 멤버를 추가하고 필드에 저장한다.
+     * 
+     * @param group
+     * @param user
+     * @return
+     */
+    public GroupMember createGroupMember(Group group, User user) {
         GroupMember groupMember = GroupMember.builder()
-                .user(user)
                 .group(group)
+                .user(user)
                 .build();
 
         return groupMemberRepository.save(groupMember);
