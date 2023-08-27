@@ -1,10 +1,12 @@
 package io.potatoy.syiary.post;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
@@ -29,6 +32,7 @@ import io.potatoy.syiary.group.entity.GroupMemberRepository;
 import io.potatoy.syiary.group.entity.GroupRepository;
 import io.potatoy.syiary.group.util.TestGroupUtil;
 import io.potatoy.syiary.post.entity.Post;
+import io.potatoy.syiary.post.entity.PostFile;
 import io.potatoy.syiary.post.entity.PostFileRepository;
 import io.potatoy.syiary.post.entity.PostRepository;
 import io.potatoy.syiary.post.handler.TestFileHandler;
@@ -139,5 +143,61 @@ public class PostControllerTest {
                 .andExpect(jsonPath("$[1].content").value(post1.getContent()))
                 .andExpect(jsonPath("$[1].files[0]").isNotEmpty())
                 .andExpect(jsonPath("$[1].files[1]").isNotEmpty());
+    }
+
+    @DisplayName("createPost(): 새로운 포스트 작성하기")
+    @WithMockUser(username = "host@mail.com")
+    @Test
+    public void successPostCreate() throws Exception {
+        /// given post 업로드에 필요한 객체들 생성 ///
+        final String url = "/api/groups/{groupUri}/posts";
+        final String groupName = "test_group";
+
+        // host 생성
+        final String hostEmail = "host@mail.com";
+        final String hostPassword = "host";
+        User hostUser = testUserUtil.createTestUser(hostEmail, hostPassword);
+
+        // group 생성 및 멤버 추가
+        Group group = testGroupUtil.createTestGroup(hostUser, groupName);
+
+        // post에 사용할 내용 추가
+        final String postContent = "test post";
+
+        // post에 전송할 첨부파일 추가하기
+        String absolutePath = TestFileHandler.getAbsolutePath();
+        MockMultipartFile file1 = new MockMultipartFile("files", "test1_image.jpeg", "image/jpeg", new FileInputStream(
+                absolutePath + "src/test/java/io/potatoy/syiary/post/assets/test1_image.jpeg"));
+        MockMultipartFile file2 = new MockMultipartFile("files", "test3_image.png", "image/png", new FileInputStream(
+                absolutePath + "src/test/java/io/potatoy/syiary/post/assets/test3_image.png"));
+
+        /// when post 요청 ///
+        ResultActions result = mockMvc.perform(multipart(url.replace("{groupUri}", group.getGroupUri()))
+                .file(file1)
+                .file(file2)
+                .param("content", postContent));
+
+        /// then 결과 확인 ///
+        // 검증에 필요한 데이터 불러오기
+        List<Post> posts = postRepository.findAll();
+        Post post = posts.get(0);
+        List<PostFile> postFiles = postFileRepository.findAllByPost(post);
+
+        result
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.postId").value(post.getId()))
+                .andExpect(jsonPath("$.content").value(post.getContent()));
+
+        // 파일이 정상적으로 저장되어 있는지 확인
+        for (PostFile postFile : postFiles) {
+            String filePath = absolutePath + "files_local/" + group.getId() + "/" + post.getId() + "/"
+                    + postFile.getFileName();
+            File file = new File(filePath);
+
+            if (!file.exists()) {
+                // 파일이 없을 경우 예외 발생
+                throw new Error("파일이 없음");
+            }
+        }
     }
 }
