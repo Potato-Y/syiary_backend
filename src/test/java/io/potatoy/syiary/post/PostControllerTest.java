@@ -2,6 +2,7 @@ package io.potatoy.syiary.post;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -31,6 +33,7 @@ import io.potatoy.syiary.group.entity.Group;
 import io.potatoy.syiary.group.entity.GroupMemberRepository;
 import io.potatoy.syiary.group.entity.GroupRepository;
 import io.potatoy.syiary.group.util.TestGroupUtil;
+import io.potatoy.syiary.post.dto.FixPostRequest;
 import io.potatoy.syiary.post.entity.Post;
 import io.potatoy.syiary.post.entity.PostFile;
 import io.potatoy.syiary.post.entity.PostFileRepository;
@@ -198,6 +201,50 @@ public class PostControllerTest {
                 // 파일이 없을 경우 예외 발생
                 throw new Error("파일이 없음");
             }
+        }
+    }
+
+    @DisplayName("fixPost(): 포스트 수정하기")
+    @WithMockUser(username = "host@mail.com")
+    @Test
+    public void successFixPost() throws Exception {
+        /// given post 수정에 필요한 객체들 생성 ///
+        final String url = "/api/groups/{groupUri}/posts/";
+        final String groupName = "test_group";
+
+        // host user 생성
+        final String hostEmail = "host@mail.com";
+        final String hostPassword = "host";
+        User hostUser = testUserUtil.createTestUser(hostEmail, hostPassword);
+
+        // group 생성 및 멤버 추가
+        Group group = testGroupUtil.createTestGroup(hostUser, groupName);
+
+        // post에 사용할 내용 추가
+        final String postContent = "test post";
+        final String fixPostContent = "fix post";
+
+        // 새로운 포스트 추가
+        Post post = testPostUtil.createPost(group, hostUser, postContent, null);
+
+        // request 객체 생성 및 JSON 직렬화
+        FixPostRequest request = new FixPostRequest();
+        request.setContent(fixPostContent);
+
+        final String requestBody = objectMapper.writeValueAsString(request);
+
+        /// when post 수정 요청 ///
+        ResultActions result = mockMvc.perform(patch(url.replace("{groupUri}", group.getGroupUri()) + post.getId())
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(requestBody));
+
+        /// then 응답 코드가 204인지 확인 후 값들을 확인한다. ///
+        result
+                .andExpect(status().isNoContent());
+
+        post = postRepository.findById(post.getId()).get();
+        if (!post.getContent().equals(fixPostContent)) {
+            throw new Error("수정에 실패하였습니다.\npost content:" + post.getContent());
         }
     }
 }
