@@ -1,5 +1,6 @@
 package io.potatoy.syiary.post;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -10,6 +11,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -247,4 +249,69 @@ public class PostControllerTest {
             throw new Error("수정에 실패하였습니다.\npost content:" + post.getContent());
         }
     }
+
+    @DisplayName("deletePost():[member] 포스트 삭제하기")
+    @WithMockUser(username = "member@mail.com")
+    @Test
+    public void successRemovePostForMember() throws Exception {
+        /// given 그룹 생성에 필요한 객체들 생성 ///
+        final String url = "/api/groups/{groupUri}/posts/";
+        final String groupName = "test_group";
+
+        // host 와 member user 생성
+        final User hostUser = testUserUtil.createTestUser("host@mail.com", "host");
+        final User memberUser = testUserUtil.createTestUser("member@mail.com", "member");
+
+        // group 생성 및 멤버 추가
+        Group group = testGroupUtil.createTestGroup(hostUser, groupName);
+        testGroupUtil.createGroupMember(group, memberUser);
+
+        // 새로운 포스트 추가
+        Post post = testPostUtil.createPost(group, memberUser, "test post", null);
+
+        /// when post 삭제 요청 ///
+        ResultActions result = mockMvc
+                .perform(delete(url.replace("{groupUri}", group.getGroupUri()) + Long.toString(post.getId())));
+
+        /// then 응답 코드가 204인지 확인하고 필드에서도 없어졌는지 확인한다. ///
+        result.andExpect(status().isNoContent());
+
+        Optional<Post> _post = postRepository.findById(1L);
+        if (!_post.isEmpty()) {
+            throw new Error(String.format("post가 있습니다. postId=%d", _post.get().getId()));
+        }
+    }
+
+    @DisplayName("deletePost():[HOST] 타인 포스트 삭제하기")
+    @WithMockUser(username = "host@mail.com")
+    @Test
+    public void successRemovePostForHostAdmin() throws Exception {
+        /// given 그룹 생성에 필요한 객체들 생성 ///
+        final String url = "/api/groups/{groupUri}/posts/";
+        final String groupName = "test_group";
+
+        // host 와 member user 생성
+        final User hostUser = testUserUtil.createTestUser("host@mail.com", "host");
+        final User memberUser = testUserUtil.createTestUser("member@mail.com", "member");
+
+        // group 생성 및 멤버 추가
+        Group group = testGroupUtil.createTestGroup(hostUser, groupName);
+        testGroupUtil.createGroupMember(group, memberUser);
+
+        // 새로운 포스트 추가
+        Post post = testPostUtil.createPost(group, memberUser, "test post", null);
+
+        /// when host 계정으로 post 삭제 요청 ///
+        ResultActions result = mockMvc
+                .perform(delete(url.replace("{groupUri}", group.getGroupUri()) + Long.toString(post.getId())));
+
+        /// then 응답 코드가 204인지 확인하고 필드에서도 없어졌는지 확인한다. ///
+        result.andExpect(status().isNoContent());
+
+        Optional<Post> _post = postRepository.findById(1L);
+        if (!_post.isEmpty()) {
+            throw new Error(String.format("post가 있습니다. postId=%d", _post.get().getId()));
+        }
+    }
+
 }
