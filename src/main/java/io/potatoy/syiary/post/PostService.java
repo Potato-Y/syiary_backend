@@ -190,6 +190,8 @@ public class PostService {
             throw new PostException(groupUri);
         }
 
+        logger.info("fixPost. userId={}, groupId={}, postId={}", user.getId(), group.getId(), postId);
+
         // 내용을 수정하여 저장
         postRepository.save(post.get().updateContent(dto.getContent()));
     }
