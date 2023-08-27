@@ -1,5 +1,6 @@
 package io.potatoy.syiary.post.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,5 +12,6 @@ import lombok.Setter;
 @Setter
 public class FixPostRequest {
 
+    @NotBlank
     private String content;
 }
