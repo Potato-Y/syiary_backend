@@ -103,6 +103,57 @@ public class PostService {
         return postResponses;
     }
 
+    public PostResponse getPost(String groupUri, Long postId) {
+        User user = securityUtil.getCurrentUser();
+
+        // 그룹 정보를 불러온다.
+        Optional<Group> _group = groupRepository.findByGroupUri(groupUri);
+        if (_group.isEmpty()) {
+            String message = "Group not found.";
+            logger.warn("getPost:GroupException. message={}", message);
+
+            throw new GroupException(message);
+        }
+        Group group = _group.get();
+
+        groupUtil.checkGroupUser(user, group); // 사용자가 그룹에 포함되어 있는지 확인
+
+        // 포스트를 불러온다.
+        Optional<Post> _post = postRepository.findById(postId);
+
+        // 포스트가 없는지 확인한다.
+        if (_post.isEmpty()) {
+            String message = "There are no posts.";
+
+            logger.warn("fixPost:PostException. userId={}, groupId={}, postId={}\nmessage={}", user.getId(),
+                    group.getId(), postId, message);
+            throw new PostException(message);
+        }
+        Post post = _post.get();
+
+        // post response 생성
+        UserResponse createUser = new UserResponse(post.getUser().getId(), post.getUser().getEmail(),
+                post.getUser().getNickname()); // create user 생성
+
+        // file의 데이터 리스트화 시키기
+        List<byte[]> files = new ArrayList<>();
+        for (PostFile postFile : post.getFiles()) {
+            try {
+                byte[] file = fileHandler.getFile(group.getId(), post.getId(), postFile.getFileName());
+                if (file != null) {
+                    files.add(file);
+                }
+            } catch (Exception e) {
+                logger.warn("PostService:getPost. message={}", e.getMessage());
+            }
+        }
+
+        PostResponse postResponse = new PostResponse(post.getId(), post.getCreatedAt(), post.getUpdatedAt(), createUser,
+                post.getContent(), files);
+
+        return postResponse;
+    }
+
     /**
      * 새로운 포스터 작성(추가)
      * 

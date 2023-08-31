@@ -36,6 +36,13 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(postResponses);
     }
 
+    @GetMapping("/{groupUri}/posts/{postId}") // 특정 post 정보 가져오기
+    public ResponseEntity<PostResponse> getPost(@PathVariable String groupUri, @PathVariable Long postId) {
+        PostResponse postResponse = postService.getPost(groupUri, postId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(postResponse);
+    }
+
     @PostMapping("/{groupUri}/posts") // 포스트 추가
     public ResponseEntity<CreatePostResponse> createPost(
             @PathVariable String groupUri,
