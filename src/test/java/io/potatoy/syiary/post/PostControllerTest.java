@@ -150,6 +150,50 @@ public class PostControllerTest {
                 .andExpect(jsonPath("$[1].files[1]").isNotEmpty());
     }
 
+    @DisplayName("getPost(): 포스트 하나의 정보를 가져온다")
+    @WithMockUser(username = "host@mail.com")
+    @Test
+    public void successPost() throws Exception {
+        /// given 특정 post 조회를 위해 필요한 객체들 생성 ///
+        final String url = "/api/groups/{groupUri}/posts/";
+        final String groupName = "test_group";
+
+        // host 생성
+        final String hostEmail = "host@mail.com";
+        final String hostPw = "host";
+        User hostUser = testUserUtil.createTestUser(hostEmail, hostPw);
+
+        // group 생성
+        Group group = testGroupUtil.createTestGroup(hostUser, groupName);
+
+        // post에 사용할 내용 추가
+        final String postContent = "test post";
+        final List<File> files = new ArrayList<>();
+        String absolutePath = TestFileHandler.getAbsolutePath();
+        files.add(new File(absolutePath + "src/test/java/io/potatoy/syiary/post/assets/test1_image.jpeg"));
+        files.add(new File(absolutePath + "src/test/java/io/potatoy/syiary/post/assets/test3_image.png"));
+
+        Post post = testPostUtil.createPost(group, hostUser, postContent, files);
+
+        /// when post 목록 요청 ///
+        ResultActions result = mockMvc.perform(get(url.replace("{groupUri}",
+                group.getGroupUri()) + post.getId()));
+
+        /// then 결과 확인 ///
+        result
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.postId").value(post.getId()))
+                .andExpect(jsonPath("$.createdAt").isNotEmpty())
+                .andExpect(jsonPath("$.updatedAt").isEmpty())
+                .andExpect(jsonPath("$.createUser.userId").value(hostUser.getId()))
+                .andExpect(jsonPath("$.createUser.email").value(hostUser.getEmail()))
+                .andExpect(jsonPath("$.createUser.nickname").value(hostUser.getNickname()))
+                .andExpect(jsonPath("$.createUser.userId").value(hostUser.getId()))
+                .andExpect(jsonPath("$.content").value(post.getContent()))
+                .andExpect(jsonPath("$.files[0]").isNotEmpty())
+                .andExpect(jsonPath("$.files[1]").isNotEmpty());
+    }
+
     @DisplayName("createPost(): 새로운 포스트 작성하기")
     @WithMockUser(username = "host@mail.com")
     @Test
