@@ -123,7 +123,7 @@ public class PostControllerTest {
         ResultActions result = mockMvc.perform(get(url.replace("{groupUri}",
                 group.getGroupUri())));
 
-        /// then 결과 확인
+        /// then 결과 확인 ///
         result
                 .andExpect(status().isOk())
                 // 포스트는 등록 역순이다.

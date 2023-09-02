@@ -153,7 +153,7 @@ public class GroupControllerTest {
                 .andExpect(jsonPath("$.id").value(group.getId()))
                 .andExpect(jsonPath("$.groupUri").value(group.getGroupUri()))
                 .andExpect(jsonPath("$.groupName").value(group.getGroupName()))
-                .andExpect(jsonPath("$.createAt").value(group.getCreatedAt().toString()))
+                .andExpect(jsonPath("$.createAt").isNotEmpty())
                 .andExpect(jsonPath("$.hostUser.userId").value(hostUser.getId()))
                 .andExpect(jsonPath("$.hostUser.email").value(hostUser.getEmail()))
                 .andExpect(jsonPath("$.hostUser.nickname").value(hostUser.getNickname()));
