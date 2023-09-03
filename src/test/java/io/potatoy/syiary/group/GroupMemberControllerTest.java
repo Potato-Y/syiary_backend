@@ -73,8 +73,8 @@ public class GroupMemberControllerTest {
         // given 그룹 생성에 필요한 객체들 생성
         final String url = "/api/groups/{groupUri}/members";
         final String groupName = "test_group";
-        final User hostUser = testUserUtil.createTestUser("host@mail.com", "host");
-        final User guestUser = testUserUtil.createTestUser("guest@mail.com", "guest");
+        final User hostUser = testUserUtil.createTestUser("host@mail.com", "host", null);
+        final User guestUser = testUserUtil.createTestUser("guest@mail.com", "guest", null);
 
         // 새로운 그룹 생성
         Group group = testGroupUtil.createTestGroup(hostUser, groupName);
@@ -100,8 +100,8 @@ public class GroupMemberControllerTest {
         // given 멤버 제거를 위한 그룹과 멤버들 생성
         final String url = "/api/groups/{groupUri}/members";
         final String groupName = "test_group";
-        final User hostUser = testUserUtil.createTestUser("host@mail.com", "host");
-        final User memberUser = testUserUtil.createTestUser("member@mail.com", "member");
+        final User hostUser = testUserUtil.createTestUser("host@mail.com", "host", null);
+        final User memberUser = testUserUtil.createTestUser("member@mail.com", "member", null);
 
         // 새로운 그룹 생성 및 멤버 추가
         Group group = testGroupUtil.createTestGroup(hostUser, groupName);
@@ -128,8 +128,8 @@ public class GroupMemberControllerTest {
         // given 멤버 제거를 위한 그룹과 멤버들 생성
         final String url = "/api/groups/{groupUri}/members";
         final String groupName = "test_group";
-        final User hostUser = testUserUtil.createTestUser("host@mail.com", "host");
-        final User memberUser = testUserUtil.createTestUser("member@mail.com", "member");
+        final User hostUser = testUserUtil.createTestUser("host@mail.com", "host", null);
+        final User memberUser = testUserUtil.createTestUser("member@mail.com", "member", null);
 
         // 새로운 그룹 생성 및 멤버 추가
         Group group = testGroupUtil.createTestGroup(hostUser, groupName);
@@ -156,10 +156,10 @@ public class GroupMemberControllerTest {
         // given 멤버 제거를 위한 그룹과 멤버들 생성
         final String url = "/api/groups/{groupUri}/members";
         final String groupName = "test_group";
-        final User hostUser = testUserUtil.createTestUser("host@mail.com", "host");
-        final User memberUser1 = testUserUtil.createTestUser("member1@mail.com", "member");
-        final User memberUser2 = testUserUtil.createTestUser("member2@mail.com", "member");
-        final User memberUser3 = testUserUtil.createTestUser("member3@mail.com", "member");
+        final User hostUser = testUserUtil.createTestUser("host@mail.com", "host", null);
+        final User memberUser1 = testUserUtil.createTestUser("member1@mail.com", "member", null);
+        final User memberUser2 = testUserUtil.createTestUser("member2@mail.com", "member", null);
+        final User memberUser3 = testUserUtil.createTestUser("member3@mail.com", "member", null);
 
         // 새로운 그룹 생성 및 멤버 추가
         Group group = testGroupUtil.createTestGroup(hostUser, groupName);

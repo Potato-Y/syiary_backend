@@ -98,12 +98,12 @@ public class PostControllerTest {
         // host 생성
         final String hostEmail = "host@mail.com";
         final String hostPassword = "host";
-        User hostUser = testUserUtil.createTestUser(hostEmail, hostPassword);
+        User hostUser = testUserUtil.createTestUser(hostEmail, hostPassword, null);
 
         // member 생성
         final String memberEmail = "member@mail.com";
         final String memberPassword = "member";
-        User memberUser = testUserUtil.createTestUser(memberEmail, memberPassword);
+        User memberUser = testUserUtil.createTestUser(memberEmail, memberPassword, null);
 
         // group 생성 및 멤버 추가
         Group group = testGroupUtil.createTestGroup(hostUser, groupName);
@@ -161,7 +161,7 @@ public class PostControllerTest {
         // host 생성
         final String hostEmail = "host@mail.com";
         final String hostPw = "host";
-        User hostUser = testUserUtil.createTestUser(hostEmail, hostPw);
+        User hostUser = testUserUtil.createTestUser(hostEmail, hostPw, null);
 
         // group 생성
         Group group = testGroupUtil.createTestGroup(hostUser, groupName);
@@ -205,7 +205,7 @@ public class PostControllerTest {
         // host 생성
         final String hostEmail = "host@mail.com";
         final String hostPassword = "host";
-        User hostUser = testUserUtil.createTestUser(hostEmail, hostPassword);
+        User hostUser = testUserUtil.createTestUser(hostEmail, hostPassword, null);
 
         // group 생성 및 멤버 추가
         Group group = testGroupUtil.createTestGroup(hostUser, groupName);
@@ -261,7 +261,7 @@ public class PostControllerTest {
         // host user 생성
         final String hostEmail = "host@mail.com";
         final String hostPassword = "host";
-        User hostUser = testUserUtil.createTestUser(hostEmail, hostPassword);
+        User hostUser = testUserUtil.createTestUser(hostEmail, hostPassword, null);
 
         // group 생성 및 멤버 추가
         Group group = testGroupUtil.createTestGroup(hostUser, groupName);
@@ -303,8 +303,8 @@ public class PostControllerTest {
         final String groupName = "test_group";
 
         // host 와 member user 생성
-        final User hostUser = testUserUtil.createTestUser("host@mail.com", "host");
-        final User memberUser = testUserUtil.createTestUser("member@mail.com", "member");
+        final User hostUser = testUserUtil.createTestUser("host@mail.com", "host", null);
+        final User memberUser = testUserUtil.createTestUser("member@mail.com", "member", null);
 
         // group 생성 및 멤버 추가
         Group group = testGroupUtil.createTestGroup(hostUser, groupName);
@@ -335,8 +335,8 @@ public class PostControllerTest {
         final String groupName = "test_group";
 
         // host 와 member user 생성
-        final User hostUser = testUserUtil.createTestUser("host@mail.com", "host");
-        final User memberUser = testUserUtil.createTestUser("member@mail.com", "member");
+        final User hostUser = testUserUtil.createTestUser("host@mail.com", "host", null);
+        final User memberUser = testUserUtil.createTestUser("member@mail.com", "member", null);
 
         // group 생성 및 멤버 추가
         Group group = testGroupUtil.createTestGroup(hostUser, groupName);

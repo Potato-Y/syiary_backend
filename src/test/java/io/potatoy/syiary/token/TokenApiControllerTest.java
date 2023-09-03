@@ -24,11 +24,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.potatoy.syiary.config.jwt.JwtProperties;
 import io.potatoy.syiary.config.jwt.TokenProvider;
-import io.potatoy.syiary.token.entity.RefreshToken;
-import io.potatoy.syiary.user.entity.User;
 import io.potatoy.syiary.token.dto.AuthenticateRequest;
 import io.potatoy.syiary.token.dto.TokenRequest;
+import io.potatoy.syiary.token.entity.RefreshToken;
 import io.potatoy.syiary.token.entity.RefreshTokenRepository;
+import io.potatoy.syiary.user.entity.User;
 import io.potatoy.syiary.user.entity.UserRepository;
 
 @SpringBootTest // 테스트용 애플리케이션 컨텍스트
@@ -71,6 +71,7 @@ public class TokenApiControllerTest {
         userRepository.save(User.builder()
                 .email(email)
                 .password(bCryptPasswordEncoder.encode(password))
+                .nickname(email)
                 .build());
 
         AuthenticateRequest request = new AuthenticateRequest();
@@ -134,6 +135,7 @@ public class TokenApiControllerTest {
         User testUser = userRepository.save(User.builder()
                 .email(email)
                 .password(bCryptPasswordEncoder.encode(password))
+                .nickname(email)
                 .build());
 
         // token set 생성

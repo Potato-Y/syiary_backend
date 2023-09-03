@@ -77,7 +77,7 @@ public class GroupControllerTest {
         final String password = "host";
         final String groupName = "test_group";
 
-        testUserUtil.createTestUser(email, password);
+        testUserUtil.createTestUser(email, password, null);
 
         CreateGroupRequest request = new CreateGroupRequest();
         request.setGroupName(groupName);
@@ -109,7 +109,7 @@ public class GroupControllerTest {
         final String groupName = "test_group";
 
         // 새로운 유저 생성
-        User user = testUserUtil.createTestUser(email, password);
+        User user = testUserUtil.createTestUser(email, password, null);
 
         // 새로운 그룹 생성
         Group group = testGroupUtil.createTestGroup(user, groupName);
@@ -139,7 +139,7 @@ public class GroupControllerTest {
         // given 그룹 정보를 받아오기 위한 그룹 생성
         final String url = "/api/groups/{groupUri}";
         final String groupName = "test_group";
-        final User hostUser = testUserUtil.createTestUser("host@mail.com", "host");
+        final User hostUser = testUserUtil.createTestUser("host@mail.com", "host", null);
 
         // 새로운 그룹 생성
         Group group = testGroupUtil.createTestGroup(hostUser, groupName);
@@ -168,8 +168,8 @@ public class GroupControllerTest {
         final String url = "/api/groups";
         final String groupName1 = "test_group_1";
         final String groupName2 = "test_group_2";
-        final User hostUser = testUserUtil.createTestUser("host@mail.com", "host");
-        final User memberUser = testUserUtil.createTestUser("member@mail.com", "member");
+        final User hostUser = testUserUtil.createTestUser("host@mail.com", "host", null);
+        final User memberUser = testUserUtil.createTestUser("member@mail.com", "member", null);
 
         // 새로운 그룹 생성 및 멤버 추가
         final Group group1 = testGroupUtil.createTestGroup(hostUser, groupName1);

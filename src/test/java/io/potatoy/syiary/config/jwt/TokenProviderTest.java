@@ -36,6 +36,7 @@ public class TokenProviderTest {
         User testUser = userRepository.save(User.builder()
                 .email("user@email.com")
                 .password("test")
+                .nickname("test user")
                 .build());
 
         // when 토큰 제공자의 generateToken() 메서드를 호출해 토큰을 만든다.
