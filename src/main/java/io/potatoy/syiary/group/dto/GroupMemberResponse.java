@@ -1,8 +1,7 @@
 package io.potatoy.syiary.group.dto;
 
-import java.util.List;
-
 import io.potatoy.syiary.user.dto.UserResponse;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +11,6 @@ import lombok.NoArgsConstructor;
 @Getter
 public class GroupMemberResponse {
 
-    private UserResponse hostUser;
-    private List<UserResponse> memberUser;
+  private UserResponse hostUser;
+  private List<UserResponse> memberUser;
 }

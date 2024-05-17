@@ -11,5 +11,5 @@ import lombok.Setter;
 @Setter
 public class GetPostListRequest {
 
-    private int page = 0;
+  private int page = 0;
 }

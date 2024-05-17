@@ -5,13 +5,13 @@ import io.potatoy.syiary.util.EnvProperties;
 
 public abstract class AbstractExceptionHandler<T extends Exception> {
 
-    public static final String PROD = "prod";
+  public static final String PROD = "prod";
 
-    protected final EnvProperties envProperties;
+  protected final EnvProperties envProperties;
 
-    public AbstractExceptionHandler(EnvProperties envProperties) {
-        this.envProperties = envProperties;
-    }
+  public AbstractExceptionHandler(EnvProperties envProperties) {
+    this.envProperties = envProperties;
+  }
 
-    public abstract ErrorResponse handleException(T exception);
+  public abstract ErrorResponse handleException(T exception);
 }

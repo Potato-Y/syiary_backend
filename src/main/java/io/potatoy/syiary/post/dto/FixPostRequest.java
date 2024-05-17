@@ -12,6 +12,6 @@ import lombok.Setter;
 @Setter
 public class FixPostRequest {
 
-    @NotBlank
-    private String content;
+  @NotBlank
+  private String content;
 }
