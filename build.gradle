@@ -53,7 +53,7 @@ tasks.named('test') {
 }
 
 configurations {
-    all{
+    all {
         // 내부 로깅 프레임워크 Logback을 제외
         exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
     }
