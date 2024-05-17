@@ -43,6 +43,7 @@ dependencies {
 
     runtimeOnly('com.h2database:h2')
 
+    testCompileOnly('org.projectlombok:lombok:1.18.26')
     testAnnotationProcessor('org.projectlombok:lombok:1.18.26')
     testImplementation('org.springframework.boot:spring-boot-starter-test:3.1.0')
     testImplementation('org.springframework.security:spring-security-test:6.0.2')
