@@ -14,4 +14,3 @@
 #### 참고 사항
 
 본 프로젝트는 `Syiary` 저장소에서 `syiary_client` 저장소로 분할되었습니다. 일부 누락된 `commit`에 대해서는 [이전 저장소](https://github.com/Potato-Y/Syiary)에서 참고하세요.
-본 프로젝트는 `Syiary` 저장소에서 `syiary_client` 저장소로 분할되었습니다. 일부 누락된 `commit`에 대해서는 [이전 저장소](https://github.com/Potato-Y/Syiary)에서 참고하세요.
