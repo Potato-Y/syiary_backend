@@ -30,8 +30,11 @@ public class GroupUtil {
     if (groupMember.isEmpty()) {
       // 멤버에 없을 경우 예외 발생
       String message = "There are no users in the member list.";
-      logger.warn("secessionGroup:GroupMemberException. userId={}, groupId={}\nmessage={}",
-          user.getId(), group.getId(), message);
+      logger.warn(
+          "secessionGroup:GroupMemberException. userId={}, groupId={}\nmessage={}",
+          user.getId(),
+          group.getId(),
+          message);
 
       throw new GroupMemberException(message);
     }

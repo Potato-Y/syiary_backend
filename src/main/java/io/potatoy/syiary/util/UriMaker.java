@@ -4,7 +4,8 @@ import java.util.Random;
 
 public class UriMaker {
 
-  private static final String CHARACTERS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+  private static final String CHARACTERS =
+      "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
   private static final int MIN_LENGTH = 6;
   private static final int MAX_LENGTH = 10;
 

@@ -26,5 +26,4 @@ public class NotFoundUserExceptionHandler extends AbstractExceptionHandler<NotFo
 
     return new ErrorResponse(HttpStatus.NOT_FOUND.value(), exception.toString());
   }
-
 }

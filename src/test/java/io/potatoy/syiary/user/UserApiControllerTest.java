@@ -21,10 +21,8 @@ import org.springframework.test.web.servlet.ResultActions;
 @ActiveProfiles("local")
 class UserApiControllerTest {
 
-  @Autowired
-  protected MockMvc mockMvc;
-  @Autowired
-  protected ObjectMapper objectMapper; // JSON 직렬화, 역직렬화를 위한 클래스
+  @Autowired protected MockMvc mockMvc;
+  @Autowired protected ObjectMapper objectMapper; // JSON 직렬화, 역직렬화를 위한 클래스
 
   @DisplayName("addUser: 새로운 유저 추가")
   @Test
@@ -40,16 +38,14 @@ class UserApiControllerTest {
     final String requestBody = objectMapper.writeValueAsString(addUserRequest);
 
     // when 회원가입 요청을 보낸다.
-    ResultActions result = mockMvc.perform(post(url)
-        .contentType(MediaType.APPLICATION_JSON_VALUE)
-        .content(requestBody));
+    ResultActions result =
+        mockMvc.perform(
+            post(url).contentType(MediaType.APPLICATION_JSON_VALUE).content(requestBody));
 
     // then 응답코드가 201인지 확인
     result
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.email").value(email))
         .andExpect(jsonPath("$.nickname").value(nickname));
-
   }
-
 }

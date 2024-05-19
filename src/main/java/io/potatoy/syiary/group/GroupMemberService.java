@@ -59,7 +59,9 @@ public class GroupMemberService {
     if (!group.getHostUser().getId().equals(user.getId())) {
       // Group의 Host User와 User가 동일하지 않습니다.
       String message = "Group Host User and User are not the same.";
-      logger.warn("signupGroup:GroupException. userId={}, groupId={}\nmessage={}", user.getId(),
+      logger.warn(
+          "signupGroup:GroupException. userId={}, groupId={}\nmessage={}",
+          user.getId(),
           group.getId(),
           message);
 
@@ -80,16 +82,17 @@ public class GroupMemberService {
     if (member.isPresent()) {
       // 유저가 이미 그룹에 있음.
       String message = "User is already in a group.";
-      logger.warn("signupGroup:GroupException. groupId={}, userId={}, guestUserId={}",
+      logger.warn(
+          "signupGroup:GroupException. groupId={}, userId={}, guestUserId={}",
           group.getId(),
-          user.getId(), guestUser.get().getId());
+          user.getId(),
+          guestUser.get().getId());
 
       throw new GroupException(message);
     }
 
     // 유저 추가 및 저장
-    groupMemberRepository.save(
-        groupMemberUtil.createGroupMemberEntity(guestUser.get(), group));
+    groupMemberRepository.save(groupMemberUtil.createGroupMemberEntity(guestUser.get(), group));
   }
 
   /**
@@ -119,7 +122,8 @@ public class GroupMemberService {
       if (!group.getHostUser().getId().equals(user.getId())) {
         // Group의 Host User와 User가 동일하지 않습니다.
         String message = "Group Host User and User are not the same.";
-        logger.warn("secessionGroup:GroupException. userId={}, groupId={}\nmessage={}",
+        logger.warn(
+            "secessionGroup:GroupException. userId={}, groupId={}\nmessage={}",
             user.getId(),
             group.getId(),
             message);
@@ -139,7 +143,9 @@ public class GroupMemberService {
         String message = "User not found.";
         logger.warn(
             "secessionGroup:NotFoundUserEmailException. userId={}, leaveUserEmail={}\nmessage={}",
-            user.getId(), dto.getUserEmail(), message);
+            user.getId(),
+            dto.getUserEmail(),
+            message);
 
         throw new NotFoundUserException(message);
       }
@@ -151,7 +157,10 @@ public class GroupMemberService {
       String message = "A host cannot leave.";
       logger.warn(
           "secessionGroup:GroupMemberException. userId={}, groupId={}, leaveUserId={}\nmessage={}",
-          user.getId(), group.getId(), leaveUser.getId(), message);
+          user.getId(),
+          group.getId(),
+          leaveUser.getId(),
+          message);
 
       throw new GroupMemberException(message);
     }
@@ -162,7 +171,10 @@ public class GroupMemberService {
       String message = "There are no users in the member list.";
       logger.warn(
           "secessionGroup:GroupMemberException. userId={}, groupId={}, leaveUserId={}\nmessage={}",
-          user.getId(), group.getId(), leaveUser.getId(), message);
+          user.getId(),
+          group.getId(),
+          leaveUser.getId(),
+          message);
 
       throw new GroupMemberException(message);
     }
@@ -188,8 +200,11 @@ public class GroupMemberService {
     Optional<GroupMember> _groupMember = groupMemberRepository.findByUserAndGroup(user, group);
     if (_groupMember.isEmpty()) {
       String message = "There are no users in the member list.";
-      logger.warn("getGroupMembers:GroupMemberException. userId={}, groupId={}\nmessage={}",
-          user.getId(), group.getId(), message);
+      logger.warn(
+          "getGroupMembers:GroupMemberException. userId={}, groupId={}\nmessage={}",
+          user.getId(),
+          group.getId(),
+          message);
 
       throw new GroupMemberException(message);
     }
@@ -197,8 +212,8 @@ public class GroupMemberService {
     List<GroupMember> groupMembers = groupMemberRepository.findAllByGroup(group);
 
     User hostUser = group.getHostUser();
-    UserResponse hostUserResponse = new UserResponse(hostUser.getId(), hostUser.getEmail(),
-        hostUser.getNickname());
+    UserResponse hostUserResponse =
+        new UserResponse(hostUser.getId(), hostUser.getEmail(), hostUser.getNickname());
 
     ArrayList<UserResponse> memberUserResponses = new ArrayList<>();
     for (GroupMember groupMember : groupMembers) {
@@ -208,7 +223,9 @@ public class GroupMemberService {
       }
 
       memberUserResponses.add(
-          new UserResponse(groupMember.getUser().getId(), groupMember.getUser().getEmail(),
+          new UserResponse(
+              groupMember.getUser().getId(),
+              groupMember.getUser().getEmail(),
               groupMember.getUser().getNickname()));
     }
 

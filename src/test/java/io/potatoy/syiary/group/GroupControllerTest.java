@@ -37,20 +37,13 @@ import org.springframework.web.context.WebApplicationContext;
 @ActiveProfiles("local")
 public class GroupControllerTest {
 
-  @Autowired
-  protected MockMvc mockMvc;
-  @Autowired
-  protected ObjectMapper objectMapper; // JSON 직렬화, 역직렬화를 위한 클래스
-  @Autowired
-  private WebApplicationContext context;
-  @Autowired
-  BCryptPasswordEncoder bCryptPasswordEncoder;
-  @Autowired
-  UserRepository userRepository;
-  @Autowired
-  GroupRepository groupRepository;
-  @Autowired
-  GroupMemberRepository groupMemberRepository;
+  @Autowired protected MockMvc mockMvc;
+  @Autowired protected ObjectMapper objectMapper; // JSON 직렬화, 역직렬화를 위한 클래스
+  @Autowired private WebApplicationContext context;
+  @Autowired BCryptPasswordEncoder bCryptPasswordEncoder;
+  @Autowired UserRepository userRepository;
+  @Autowired GroupRepository groupRepository;
+  @Autowired GroupMemberRepository groupMemberRepository;
 
   TestUserUtil testUserUtil;
   TestGroupUtil testGroupUtil;
@@ -84,9 +77,9 @@ public class GroupControllerTest {
     final String requestBody = objectMapper.writeValueAsString(request);
 
     // when 로그인 요청
-    ResultActions resultActions = mockMvc.perform(post(url)
-        .contentType(MediaType.APPLICATION_JSON_VALUE)
-        .content(requestBody));
+    ResultActions resultActions =
+        mockMvc.perform(
+            post(url).contentType(MediaType.APPLICATION_JSON_VALUE).content(requestBody));
 
     // then 응답 코드가 201인지 확인, 값들이 전부 잘 들어왔는지 확인.
     resultActions
@@ -118,13 +111,14 @@ public class GroupControllerTest {
     final String requestBody = objectMapper.writeValueAsString(request);
 
     // when 그룹 삭제 요청
-    ResultActions result = mockMvc.perform(delete(url + "/" + group.getGroupUri())
-        .contentType(MediaType.APPLICATION_JSON_VALUE)
-        .content(requestBody));
+    ResultActions result =
+        mockMvc.perform(
+            delete(url + "/" + group.getGroupUri())
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(requestBody));
 
     // then 응답 코드가 204인지 확인한다.
-    result
-        .andExpect(status().isNoContent());
+    result.andExpect(status().isNoContent());
 
     // TODO 그룹 포스트가 있는 상태에서도 그룹 삭제가 정상적으로 작동하는지 확인
     assertThat(groupRepository.findAll().size()).isZero();
@@ -155,7 +149,6 @@ public class GroupControllerTest {
         .andExpect(jsonPath("$.hostUser.userId").value(hostUser.getId()))
         .andExpect(jsonPath("$.hostUser.email").value(hostUser.getEmail()))
         .andExpect(jsonPath("$.hostUser.nickname").value(hostUser.getNickname()));
-
   }
 
   @DisplayName("getGroupList(): 가입한 그룹의 리스트를 모두 가져온다.")

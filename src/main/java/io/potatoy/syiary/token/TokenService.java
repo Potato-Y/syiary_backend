@@ -63,10 +63,10 @@ public class TokenService {
    */
   public AuthenticateResponse createNewTokenSet(AuthenticateRequest dto) {
     // 유저의 이메일과 패스워드를 통해 유저를 확인
-    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-        dto.getEmail(), dto.getPassword());
-    Authentication authentication = authenticationManagerBuilder.getObject()
-        .authenticate(authenticationToken);
+    UsernamePasswordAuthenticationToken authenticationToken =
+        new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword());
+    Authentication authentication =
+        authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
     // 정상적으로 수행될 경우 user 객체 생성
     UserDetails userDetails = (UserDetails) authentication.getPrincipal();
@@ -75,9 +75,11 @@ public class TokenService {
     // refresh token 생성
     String refreshToken = tokenProvider.generateToken(user, REFRESH_TOKEN_DURATION);
     // 기존에 저장된 refresh token이 있을 경우 교체, 없을 경우 새로 저장
-    RefreshToken refreshTokenModel = refreshTokenRepository.findByUserId(user.getId())
-        .map(entity -> entity.update(refreshToken))
-        .orElse(new RefreshToken(user.getId(), refreshToken));
+    RefreshToken refreshTokenModel =
+        refreshTokenRepository
+            .findByUserId(user.getId())
+            .map(entity -> entity.update(refreshToken))
+            .orElse(new RefreshToken(user.getId(), refreshToken));
     refreshTokenRepository.save(refreshTokenModel);
 
     // access token 생성

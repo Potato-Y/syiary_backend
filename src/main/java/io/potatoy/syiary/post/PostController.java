@@ -28,16 +28,16 @@ public class PostController {
   private final PostService postService;
 
   @GetMapping("/{groupUri}/posts")
-  public ResponseEntity<List<PostResponse>> getPostList(@PathVariable String groupUri,
-      GetPostListRequest request) {
+  public ResponseEntity<List<PostResponse>> getPostList(
+      @PathVariable String groupUri, GetPostListRequest request) {
     List<PostResponse> postResponses = postService.getList(groupUri, request);
 
     return ResponseEntity.status(HttpStatus.OK).body(postResponses);
   }
 
   @GetMapping("/{groupUri}/posts/{postId}") // 특정 post 정보 가져오기
-  public ResponseEntity<PostResponse> getPost(@PathVariable String groupUri,
-      @PathVariable Long postId) {
+  public ResponseEntity<PostResponse> getPost(
+      @PathVariable String groupUri, @PathVariable Long postId) {
     PostResponse postResponse = postService.getPost(groupUri, postId);
 
     return ResponseEntity.status(HttpStatus.OK).body(postResponse);
@@ -45,8 +45,8 @@ public class PostController {
 
   @PostMapping("/{groupUri}/posts") // 포스트 추가
   public ResponseEntity<CreatePostResponse> createPost(
-      @PathVariable String groupUri,
-      @Validated @ModelAttribute CreatePostRequest request) throws Exception {
+      @PathVariable String groupUri, @Validated @ModelAttribute CreatePostRequest request)
+      throws Exception {
 
     CreatePostResponse response = postService.createPost(groupUri, request);
 
@@ -57,7 +57,8 @@ public class PostController {
   public ResponseEntity<String> fixPost(
       @PathVariable String groupUri,
       @PathVariable Long postId,
-      @Validated @RequestBody FixPostRequest request) throws Exception {
+      @Validated @RequestBody FixPostRequest request)
+      throws Exception {
 
     postService.fixPost(groupUri, postId, request);
 
@@ -66,8 +67,7 @@ public class PostController {
 
   @DeleteMapping("/{groupUri}/posts/{postId}") // 포스트 삭제
   public ResponseEntity<String> deletePost(
-      @PathVariable String groupUri,
-      @PathVariable Long postId) {
+      @PathVariable String groupUri, @PathVariable Long postId) {
 
     postService.deletePost(groupUri, postId);
 

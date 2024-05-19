@@ -30,16 +30,16 @@ public class GroupMemberController {
   }
 
   @PostMapping("/{groupUri}/members") // 그룹에 유저 추가
-  public ResponseEntity<String> signupGroup(@PathVariable String groupUri,
-      @Validated @RequestBody SignupGroupRequest request) {
+  public ResponseEntity<String> signupGroup(
+      @PathVariable String groupUri, @Validated @RequestBody SignupGroupRequest request) {
     groupMemberService.signupGroup(groupUri, request);
 
     return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
   }
 
   @DeleteMapping("/{groupUri}/members") // 그룹에서 멤버 탈퇴
-  public ResponseEntity<String> secessionGroup(@PathVariable String groupUri,
-      @Validated @RequestBody SecessionGroupRequest request) {
+  public ResponseEntity<String> secessionGroup(
+      @PathVariable String groupUri, @Validated @RequestBody SecessionGroupRequest request) {
     groupMemberService.secessionGroup(groupUri, request);
 
     return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);

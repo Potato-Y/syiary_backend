@@ -34,11 +34,7 @@ public class TestPostUtil {
    */
   public Post createPost(Group group, User createUser, String content, List<File> files) {
 
-    Post post = Post.builder()
-        .group(group)
-        .user(createUser)
-        .content(content)
-        .build();
+    Post post = Post.builder().group(group).user(createUser).content(content).build();
 
     postRepository.save(post);
 

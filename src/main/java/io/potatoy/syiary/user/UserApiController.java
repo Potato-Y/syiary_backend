@@ -38,7 +38,10 @@ public class UserApiController {
   public ResponseEntity<UserResponse> user() {
     User user = securityUtil.getCurrentUser();
 
-    logger.info("user. userId={}, userEmail={}, userNickname={}", user.getId(), user.getEmail(),
+    logger.info(
+        "user. userId={}, userEmail={}, userNickname={}",
+        user.getId(),
+        user.getEmail(),
         user.getNickname());
 
     return ResponseEntity.status(HttpStatus.OK)

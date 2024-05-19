@@ -18,9 +18,6 @@ public class GroupMemberUtil {
    * @return
    */
   public GroupMember createGroupMemberEntity(User user, Group group) {
-    return GroupMember.builder()
-        .user(user)
-        .group(group)
-        .build();
+    return GroupMember.builder().user(user).group(group).build();
   }
 }

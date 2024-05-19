@@ -14,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Setter
 public class CreatePostRequest {
 
-  @NotNull
-  private String content;
+  @NotNull private String content;
   private List<MultipartFile> files;
 }

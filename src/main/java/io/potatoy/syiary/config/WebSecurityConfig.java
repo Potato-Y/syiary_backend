@@ -27,15 +27,15 @@ public class WebSecurityConfig {
   // 스프링 시큐리티 기능 비활성화
   @Bean
   public WebSecurityCustomizer configure() {
-    return web -> web.ignoring()
-        .requestMatchers(toH2Console())
-        .requestMatchers("/img/**", "/css/**", "/js/**");
+    return web ->
+        web.ignoring()
+            .requestMatchers(toH2Console())
+            .requestMatchers("/img/**", "/css/**", "/js/**");
   }
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    return http
-        .csrf(AbstractHttpConfigurer::disable)
+    return http.csrf(AbstractHttpConfigurer::disable)
         .httpBasic(AbstractHttpConfigurer::disable)
         .formLogin(AbstractHttpConfigurer::disable)
         .logout(AbstractHttpConfigurer::disable)
@@ -46,16 +46,16 @@ public class WebSecurityConfig {
 
         // 헤더를 확인하는 커스텀 필터 추가
         .addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-
-        .authorizeHttpRequests(authz -> authz
-            // 로그인, 회원가입, 토큰 갱신을 제외한 api는 인증을 하도록 설정
-            .requestMatchers(
-                "/api/authenticate",
-                "/api/signup",
-                "/api/token")
-            .permitAll()
-            .requestMatchers("/api/**").authenticated()
-            .anyRequest().permitAll())
+        .authorizeHttpRequests(
+            authz ->
+                authz
+                    // 로그인, 회원가입, 토큰 갱신을 제외한 api는 인증을 하도록 설정
+                    .requestMatchers("/api/authenticate", "/api/signup", "/api/token")
+                    .permitAll()
+                    .requestMatchers("/api/**")
+                    .authenticated()
+                    .anyRequest()
+                    .permitAll())
         .build();
   }
 

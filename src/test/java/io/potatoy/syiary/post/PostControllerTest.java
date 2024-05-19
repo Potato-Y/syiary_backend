@@ -48,24 +48,15 @@ import org.springframework.web.context.WebApplicationContext;
 @ActiveProfiles("local")
 public class PostControllerTest {
 
-  @Autowired
-  protected MockMvc mockMvc;
-  @Autowired
-  protected ObjectMapper objectMapper; // JSON 직렬화, 역직렬화를 위한 클래스
-  @Autowired
-  private WebApplicationContext context;
-  @Autowired
-  BCryptPasswordEncoder bCryptPasswordEncoder;
-  @Autowired
-  UserRepository userRepository;
-  @Autowired
-  GroupRepository groupRepository;
-  @Autowired
-  GroupMemberRepository groupMemberRepository;
-  @Autowired
-  PostRepository postRepository;
-  @Autowired
-  PostFileRepository postFileRepository;
+  @Autowired protected MockMvc mockMvc;
+  @Autowired protected ObjectMapper objectMapper; // JSON 직렬화, 역직렬화를 위한 클래스
+  @Autowired private WebApplicationContext context;
+  @Autowired BCryptPasswordEncoder bCryptPasswordEncoder;
+  @Autowired UserRepository userRepository;
+  @Autowired GroupRepository groupRepository;
+  @Autowired GroupMemberRepository groupMemberRepository;
+  @Autowired PostRepository postRepository;
+  @Autowired PostFileRepository postFileRepository;
 
   TestUserUtil testUserUtil;
   TestGroupUtil testGroupUtil;
@@ -119,8 +110,7 @@ public class PostControllerTest {
     Post post2 = testPostUtil.createPost(group, memberUser, postContent, files);
 
     /// when post 목록 요청 ///
-    ResultActions result = mockMvc.perform(get(url.replace("{groupUri}",
-        group.getGroupUri())));
+    ResultActions result = mockMvc.perform(get(url.replace("{groupUri}", group.getGroupUri())));
 
     /// then 결과 확인 ///
     result
@@ -136,7 +126,6 @@ public class PostControllerTest {
         .andExpect(jsonPath("$[0].content").value(post2.getContent()))
         .andExpect(jsonPath("$[0].files[0]").isNotEmpty())
         .andExpect(jsonPath("$[0].files[1]").isNotEmpty())
-
         .andExpect(jsonPath("$[1].postId").value(post1.getId()))
         .andExpect(jsonPath("$[1].createdAt").isNotEmpty())
         .andExpect(jsonPath("$[1].updatedAt").isEmpty())
@@ -177,8 +166,8 @@ public class PostControllerTest {
     Post post = testPostUtil.createPost(group, hostUser, postContent, files);
 
     /// when post 목록 요청 ///
-    ResultActions result = mockMvc.perform(get(url.replace("{groupUri}",
-        group.getGroupUri()) + post.getId()));
+    ResultActions result =
+        mockMvc.perform(get(url.replace("{groupUri}", group.getGroupUri()) + post.getId()));
 
     /// then 결과 확인 ///
     result
@@ -216,18 +205,28 @@ public class PostControllerTest {
 
     // post에 전송할 첨부파일 추가하기
     String absolutePath = TestFileHandler.getAbsolutePath();
-    MockMultipartFile file1 = new MockMultipartFile("files", "test1_image.jpeg", "image/jpeg",
-        new FileInputStream(
-            absolutePath + "src/test/java/io/potatoy/syiary/post/assets/test1_image.jpeg"));
-    MockMultipartFile file2 = new MockMultipartFile("files", "test3_image.png", "image/png",
-        new FileInputStream(
-            absolutePath + "src/test/java/io/potatoy/syiary/post/assets/test3_image.png"));
+    MockMultipartFile file1 =
+        new MockMultipartFile(
+            "files",
+            "test1_image.jpeg",
+            "image/jpeg",
+            new FileInputStream(
+                absolutePath + "src/test/java/io/potatoy/syiary/post/assets/test1_image.jpeg"));
+    MockMultipartFile file2 =
+        new MockMultipartFile(
+            "files",
+            "test3_image.png",
+            "image/png",
+            new FileInputStream(
+                absolutePath + "src/test/java/io/potatoy/syiary/post/assets/test3_image.png"));
 
     /// when post 요청 ///
-    ResultActions result = mockMvc.perform(multipart(url.replace("{groupUri}", group.getGroupUri()))
-        .file(file1)
-        .file(file2)
-        .param("content", postContent));
+    ResultActions result =
+        mockMvc.perform(
+            multipart(url.replace("{groupUri}", group.getGroupUri()))
+                .file(file1)
+                .file(file2)
+                .param("content", postContent));
 
     /// then 결과 확인 ///
     // 검증에 필요한 데이터 불러오기
@@ -242,8 +241,14 @@ public class PostControllerTest {
 
     // 파일이 정상적으로 저장되어 있는지 확인
     for (PostFile postFile : postFiles) {
-      String filePath = absolutePath + "files_local/" + group.getId() + "/" + post.getId() + "/"
-          + postFile.getFileName();
+      String filePath =
+          absolutePath
+              + "files_local/"
+              + group.getId()
+              + "/"
+              + post.getId()
+              + "/"
+              + postFile.getFileName();
       File file = new File(filePath);
 
       if (!file.exists()) {
@@ -283,14 +288,14 @@ public class PostControllerTest {
     final String requestBody = objectMapper.writeValueAsString(request);
 
     /// when post 수정 요청 ///
-    ResultActions result = mockMvc.perform(
-        patch(url.replace("{groupUri}", group.getGroupUri()) + post.getId())
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .content(requestBody));
+    ResultActions result =
+        mockMvc.perform(
+            patch(url.replace("{groupUri}", group.getGroupUri()) + post.getId())
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(requestBody));
 
     /// then 응답 코드가 204인지 확인 후 값들을 확인한다. ///
-    result
-        .andExpect(status().isNoContent());
+    result.andExpect(status().isNoContent());
 
     post = postRepository.findById(post.getId()).get();
     if (!post.getContent().equals(fixPostContent)) {
@@ -318,8 +323,8 @@ public class PostControllerTest {
     Post post = testPostUtil.createPost(group, memberUser, "test post", null);
 
     /// when post 삭제 요청 ///
-    ResultActions result = mockMvc
-        .perform(
+    ResultActions result =
+        mockMvc.perform(
             delete(url.replace("{groupUri}", group.getGroupUri()) + Long.toString(post.getId())));
 
     /// then 응답 코드가 204인지 확인하고 필드에서도 없어졌는지 확인한다. ///
@@ -351,8 +356,8 @@ public class PostControllerTest {
     Post post = testPostUtil.createPost(group, memberUser, "test post", null);
 
     /// when host 계정으로 post 삭제 요청 ///
-    ResultActions result = mockMvc
-        .perform(
+    ResultActions result =
+        mockMvc.perform(
             delete(url.replace("{groupUri}", group.getGroupUri()) + Long.toString(post.getId())));
 
     /// then 응답 코드가 204인지 확인하고 필드에서도 없어졌는지 확인한다. ///
@@ -363,5 +368,4 @@ public class PostControllerTest {
       throw new Error(String.format("post가 있습니다. postId=%d", _post.get().getId()));
     }
   }
-
 }

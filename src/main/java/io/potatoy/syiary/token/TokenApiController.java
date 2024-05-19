@@ -22,15 +22,13 @@ public class TokenApiController {
   @PostMapping("/authenticate")
   public ResponseEntity<AuthenticateResponse> authenticate(
       @RequestBody AuthenticateRequest request) {
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(tokenService.createNewTokenSet(request));
+    return ResponseEntity.status(HttpStatus.OK).body(tokenService.createNewTokenSet(request));
   }
 
   @PostMapping("/token")
   public ResponseEntity<TokenResponse> token(@RequestBody TokenRequest request) {
     String accessToken = tokenService.createNewAccessToken(request);
 
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(new TokenResponse(accessToken));
+    return ResponseEntity.status(HttpStatus.OK).body(new TokenResponse(accessToken));
   }
 }

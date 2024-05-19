@@ -60,11 +60,8 @@ public class TestFileHandler {
       }
 
       // post file entity 생성
-      PostFile postFile = PostFile.builder()
-          .post(post)
-          .fileType(fileType)
-          .fileName(file.getName())
-          .build();
+      PostFile postFile =
+          PostFile.builder().post(post).fileType(fileType).fileName(file.getName()).build();
 
       postFiles.add(postFile);
     }

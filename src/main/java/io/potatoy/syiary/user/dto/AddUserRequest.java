@@ -13,11 +13,7 @@ import lombok.Setter;
 @Setter
 public class AddUserRequest {
 
-  @NotNull
-  @Email
-  private String email;
-  @NotNull
-  private String password;
-  @NotNull
-  private String nickname;
+  @NotNull @Email private String email;
+  @NotNull private String password;
+  @NotNull private String nickname;
 }

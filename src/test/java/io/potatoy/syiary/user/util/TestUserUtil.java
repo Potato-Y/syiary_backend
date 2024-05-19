@@ -22,13 +22,14 @@ public class TestUserUtil {
    * @return
    */
   public User createTestUser(String email, String password, String nickname) {
-    User user = userRepository.save(User.builder()
-        .email(email)
-        .password(bCryptPasswordEncoder.encode(password))
-        .nickname(nickname == null ? email : nickname)
-        .build());
+    User user =
+        userRepository.save(
+            User.builder()
+                .email(email)
+                .password(bCryptPasswordEncoder.encode(password))
+                .nickname(nickname == null ? email : nickname)
+                .build());
 
     return user;
   }
-
 }

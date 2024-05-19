@@ -36,20 +36,13 @@ import org.springframework.web.context.WebApplicationContext;
 @ActiveProfiles("local")
 public class GroupMemberControllerTest {
 
-  @Autowired
-  protected MockMvc mockMvc;
-  @Autowired
-  protected ObjectMapper objectMapper; // JSON 직렬화, 역직렬화를 위한 클래스
-  @Autowired
-  private WebApplicationContext context;
-  @Autowired
-  BCryptPasswordEncoder bCryptPasswordEncoder;
-  @Autowired
-  UserRepository userRepository;
-  @Autowired
-  GroupRepository groupRepository;
-  @Autowired
-  GroupMemberRepository groupMemberRepository;
+  @Autowired protected MockMvc mockMvc;
+  @Autowired protected ObjectMapper objectMapper; // JSON 직렬화, 역직렬화를 위한 클래스
+  @Autowired private WebApplicationContext context;
+  @Autowired BCryptPasswordEncoder bCryptPasswordEncoder;
+  @Autowired UserRepository userRepository;
+  @Autowired GroupRepository groupRepository;
+  @Autowired GroupMemberRepository groupMemberRepository;
 
   TestUserUtil testUserUtil;
   TestGroupUtil testGroupUtil;
@@ -82,13 +75,14 @@ public class GroupMemberControllerTest {
     final String requestBody = objectMapper.writeValueAsString(request);
 
     // when 게스트 가입 요청
-    ResultActions result = mockMvc.perform(post(url.replace("{groupUri}", group.getGroupUri()))
-        .contentType(MediaType.APPLICATION_JSON_VALUE)
-        .content(requestBody));
+    ResultActions result =
+        mockMvc.perform(
+            post(url.replace("{groupUri}", group.getGroupUri()))
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(requestBody));
 
     // then 응답 코드가 204인지 확인한다.
-    result
-        .andExpect(status().isNoContent());
+    result.andExpect(status().isNoContent());
   }
 
   @DisplayName("secessionGroup(): 그룹의 멤버를 제거한다.")
@@ -110,13 +104,14 @@ public class GroupMemberControllerTest {
     final String requestBody = objectMapper.writeValueAsString(request);
 
     // when 멤버 탈퇴 요청
-    ResultActions result = mockMvc.perform(delete(url.replace("{groupUri}", group.getGroupUri()))
-        .contentType(MediaType.APPLICATION_JSON_VALUE)
-        .content(requestBody));
+    ResultActions result =
+        mockMvc.perform(
+            delete(url.replace("{groupUri}", group.getGroupUri()))
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(requestBody));
 
     // then 응답 코드가 204인지 확인한다.
-    result
-        .andExpect(status().isNoContent());
+    result.andExpect(status().isNoContent());
   }
 
   @DisplayName("secessionGroup(): 그룹에서 탈퇴한다.")
@@ -138,13 +133,14 @@ public class GroupMemberControllerTest {
     final String requestBody = objectMapper.writeValueAsString(request);
 
     // when 멤버 탈퇴 요청
-    ResultActions result = mockMvc.perform(delete(url.replace("{groupUri}", group.getGroupUri()))
-        .contentType(MediaType.APPLICATION_JSON_VALUE)
-        .content(requestBody));
+    ResultActions result =
+        mockMvc.perform(
+            delete(url.replace("{groupUri}", group.getGroupUri()))
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(requestBody));
 
     // then 응답 코드가 204인지 확인한다.
-    result
-        .andExpect(status().isNoContent());
+    result.andExpect(status().isNoContent());
   }
 
   @DisplayName("getGroupMembers(): 그룹 멤버 리스트를 불러온다.")
@@ -183,6 +179,5 @@ public class GroupMemberControllerTest {
         .andExpect(jsonPath("$.memberUser[2].userId").value(memberUser3.getId()))
         .andExpect(jsonPath("$.memberUser[2].email").value(memberUser3.getEmail()))
         .andExpect(jsonPath("$.memberUser[2].nickname").value(memberUser3.getNickname()));
-
   }
 }

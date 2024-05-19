@@ -28,8 +28,7 @@ public class GroupController {
   public ResponseEntity<CreateGroupResponse> createGroup(
       @Validated @RequestBody CreateGroupRequest request) {
 
-    return ResponseEntity.status(HttpStatus.CREATED)
-        .body(groupService.createGroup(request));
+    return ResponseEntity.status(HttpStatus.CREATED).body(groupService.createGroup(request));
   }
 
   @GetMapping("/groups") // 그룹 목록 가져오기
@@ -47,8 +46,8 @@ public class GroupController {
   }
 
   @DeleteMapping("/groups/{groupUri}") // 그룹 삭제
-  public ResponseEntity<String> deleteGroup(@PathVariable String groupUri,
-      @Validated @RequestBody DeleteGroupRequest request) {
+  public ResponseEntity<String> deleteGroup(
+      @PathVariable String groupUri, @Validated @RequestBody DeleteGroupRequest request) {
     groupService.deleteGroup(groupUri, request);
 
     return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);

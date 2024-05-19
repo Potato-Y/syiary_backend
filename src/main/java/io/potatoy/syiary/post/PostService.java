@@ -77,8 +77,9 @@ public class PostService {
     List<PostResponse> postResponses = new ArrayList<>();
     for (Post post : posts) {
       // 작성자 정보 가져오기
-      UserResponse createUser = new UserResponse(post.getUser().getId(), post.getUser().getEmail(),
-          post.getUser().getNickname());
+      UserResponse createUser =
+          new UserResponse(
+              post.getUser().getId(), post.getUser().getEmail(), post.getUser().getNickname());
 
       // file의 데이터 리스트화 시키기
       List<byte[]> files = new ArrayList<>();
@@ -94,8 +95,13 @@ public class PostService {
       }
 
       postResponses.add(
-          new PostResponse(post.getId(), post.getCreatedAt(), post.getUpdatedAt(), createUser,
-              post.getContent(), files));
+          new PostResponse(
+              post.getId(),
+              post.getCreatedAt(),
+              post.getUpdatedAt(),
+              createUser,
+              post.getContent(),
+              files));
     }
 
     logger.info("getList. userId={}, groupId={}", user.getId(), group.getId());
@@ -124,16 +130,22 @@ public class PostService {
     if (_post.isEmpty()) {
       String message = "There are no posts.";
 
-      logger.warn("fixPost:PostException. userId={}, groupId={}, postId={}\nmessage={}",
+      logger.warn(
+          "fixPost:PostException. userId={}, groupId={}, postId={}\nmessage={}",
           user.getId(),
-          group.getId(), postId, message);
+          group.getId(),
+          postId,
+          message);
       throw new PostException(message);
     }
     Post post = _post.get();
 
     // post response 생성
-    UserResponse createUser = new UserResponse(post.getUser().getId(), post.getUser().getEmail(),
-        post.getUser().getNickname()); // create user 생성
+    UserResponse createUser =
+        new UserResponse(
+            post.getUser().getId(),
+            post.getUser().getEmail(),
+            post.getUser().getNickname()); // create user 생성
 
     // file의 데이터 리스트화 시키기
     List<byte[]> files = new ArrayList<>();
@@ -148,9 +160,14 @@ public class PostService {
       }
     }
 
-    PostResponse postResponse = new PostResponse(post.getId(), post.getCreatedAt(),
-        post.getUpdatedAt(), createUser,
-        post.getContent(), files);
+    PostResponse postResponse =
+        new PostResponse(
+            post.getId(),
+            post.getCreatedAt(),
+            post.getUpdatedAt(),
+            createUser,
+            post.getContent(),
+            files);
 
     return postResponse;
   }
@@ -183,11 +200,7 @@ public class PostService {
     logger.info("createPost. userId={}, groupId={}", user.getId(), group.getId());
 
     // post file를 저장하기 위해 먼저 post를 저장
-    Post post = Post.builder()
-        .group(group)
-        .user(user)
-        .content(dto.getContent())
-        .build();
+    Post post = Post.builder().group(group).user(user).content(dto.getContent()).build();
     postRepository.save(post);
 
     // PostFile 객체를 받아오고, db에 관련 정보를 저장
@@ -227,9 +240,12 @@ public class PostService {
     if (post.isEmpty()) {
       String message = "There are no posts.";
 
-      logger.warn("fixPost:PostException. userId={}, groupId={}, postId={}\nmessage={}",
+      logger.warn(
+          "fixPost:PostException. userId={}, groupId={}, postId={}\nmessage={}",
           user.getId(),
-          group.getId(), postId, message);
+          group.getId(),
+          postId,
+          message);
       throw new PostException(message);
     }
 
@@ -238,9 +254,12 @@ public class PostService {
     if (authority == false) {
       String message = "Requester is not the author of the post.";
 
-      logger.warn("fixPost:PostException. userId={}, groupId={}, postId={}\nmessage={}",
+      logger.warn(
+          "fixPost:PostException. userId={}, groupId={}, postId={}\nmessage={}",
           user.getId(),
-          group.getId(), postId, message);
+          group.getId(),
+          postId,
+          message);
       throw new PostException(groupUri);
     }
 
@@ -270,9 +289,12 @@ public class PostService {
     if (_post.isEmpty()) {
       String message = "There are no posts.";
 
-      logger.warn("fixPost:PostException. userId={}, groupId={}, postId={}\nmessage={}",
+      logger.warn(
+          "fixPost:PostException. userId={}, groupId={}, postId={}\nmessage={}",
           user.getId(),
-          group.getId(), postId, message);
+          group.getId(),
+          postId,
+          message);
       throw new PostException(message);
     }
     Post post = _post.get();
@@ -282,9 +304,12 @@ public class PostService {
     if (authority == false) {
       String message = "You do not have permission to delete posts.";
 
-      logger.warn("deletePost:PostException. userId={}, groupId={}, postId={}\nmessage={}",
+      logger.warn(
+          "deletePost:PostException. userId={}, groupId={}, postId={}\nmessage={}",
           user.getId(),
-          group.getId(), postId, message);
+          group.getId(),
+          postId,
+          message);
       throw new PostException(groupUri);
     }
 

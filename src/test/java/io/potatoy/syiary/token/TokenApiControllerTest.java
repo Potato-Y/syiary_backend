@@ -33,22 +33,14 @@ import org.springframework.web.context.WebApplicationContext;
 @ActiveProfiles("local")
 public class TokenApiControllerTest {
 
-  @Autowired
-  protected MockMvc mockMvc;
-  @Autowired
-  protected ObjectMapper objectMapper; // JSON 직렬화, 역직렬화를 위한 클래스
-  @Autowired
-  private WebApplicationContext context;
-  @Autowired
-  JwtProperties jwtProperties;
-  @Autowired
-  UserRepository userRepository;
-  @Autowired
-  RefreshTokenRepository refreshTokenRepository;
-  @Autowired
-  BCryptPasswordEncoder bCryptPasswordEncoder;
-  @Autowired
-  TokenProvider tokenProvider;
+  @Autowired protected MockMvc mockMvc;
+  @Autowired protected ObjectMapper objectMapper; // JSON 직렬화, 역직렬화를 위한 클래스
+  @Autowired private WebApplicationContext context;
+  @Autowired JwtProperties jwtProperties;
+  @Autowired UserRepository userRepository;
+  @Autowired RefreshTokenRepository refreshTokenRepository;
+  @Autowired BCryptPasswordEncoder bCryptPasswordEncoder;
+  @Autowired TokenProvider tokenProvider;
 
   @BeforeEach
   public void mockMvcSetup() {
@@ -65,11 +57,12 @@ public class TokenApiControllerTest {
     final String email = "user@mail.com";
     final String password = "test";
 
-    userRepository.save(User.builder()
-        .email(email)
-        .password(bCryptPasswordEncoder.encode(password))
-        .nickname(email)
-        .build());
+    userRepository.save(
+        User.builder()
+            .email(email)
+            .password(bCryptPasswordEncoder.encode(password))
+            .nickname(email)
+            .build());
 
     AuthenticateRequest request = new AuthenticateRequest();
     request.setEmail(email);
@@ -79,9 +72,9 @@ public class TokenApiControllerTest {
     final String requestBody = objectMapper.writeValueAsString(request);
 
     // when 로그인에 요청
-    ResultActions resultActions = mockMvc.perform(post(url)
-        .contentType(MediaType.APPLICATION_JSON_VALUE)
-        .content(requestBody));
+    ResultActions resultActions =
+        mockMvc.perform(
+            post(url).contentType(MediaType.APPLICATION_JSON_VALUE).content(requestBody));
 
     // then 응답 코드가 200인지 확인, 값들이 전부 잘 들어왔는지 확인.
     resultActions
@@ -129,11 +122,13 @@ public class TokenApiControllerTest {
     final String email = "user@mail.com";
     final String password = "test";
 
-    User testUser = userRepository.save(User.builder()
-        .email(email)
-        .password(bCryptPasswordEncoder.encode(password))
-        .nickname(email)
-        .build());
+    User testUser =
+        userRepository.save(
+            User.builder()
+                .email(email)
+                .password(bCryptPasswordEncoder.encode(password))
+                .nickname(email)
+                .build());
 
     // token set 생성
     final String accessToken = tokenProvider.generateToken(testUser, ACCESS_TOKEN_DURATION);
@@ -150,13 +145,11 @@ public class TokenApiControllerTest {
     final String requestBody = objectMapper.writeValueAsString(tokenRequest);
 
     // when 새로운 access token 요청을 보낸다.
-    ResultActions result = mockMvc.perform(post(url)
-        .contentType(MediaType.APPLICATION_JSON_VALUE)
-        .content(requestBody));
+    ResultActions result =
+        mockMvc.perform(
+            post(url).contentType(MediaType.APPLICATION_JSON_VALUE).content(requestBody));
 
     // then 응답코드 확인
-    result
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.accessToken").isNotEmpty());
+    result.andExpect(status().isOk()).andExpect(jsonPath("$.accessToken").isNotEmpty());
   }
 }

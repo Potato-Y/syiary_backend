@@ -35,10 +35,7 @@ public class FileHandler {
   }
 
   public List<PostFile> parseFileInfo(
-      User user,
-      Group group,
-      Post post,
-      List<MultipartFile> multipartFiles) throws Exception {
+      User user, Group group, Post post, List<MultipartFile> multipartFiles) throws Exception {
 
     UriMaker uriMaker = new UriMaker();
 
@@ -97,11 +94,8 @@ public class FileHandler {
         String newFileName = current_date + "." + uriMaker.createName() + originalFileExtension;
 
         // 생성 후 리스트에 추가
-        PostFile postFile = PostFile.builder()
-            .post(post)
-            .fileType(fileType)
-            .fileName(newFileName)
-            .build();
+        PostFile postFile =
+            PostFile.builder().post(post).fileType(fileType).fileName(newFileName).build();
 
         postFileList.add(postFile);
 
@@ -109,15 +103,13 @@ public class FileHandler {
         file = new File(path + newFileName);
         multipartFile.transferTo(file);
       }
-
     }
     return postFileList;
-
   }
 
   public void deleteFile(PostFile postFile) {
-    final String filePath = getPath(postFile.getPost().getId(), postFile.getPost().getId())
-        + postFile.getFileName();
+    final String filePath =
+        getPath(postFile.getPost().getId(), postFile.getPost().getId()) + postFile.getFileName();
 
     File file = new File(filePath);
     file.delete();

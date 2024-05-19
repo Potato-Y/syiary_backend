@@ -14,8 +14,8 @@ public class TestGroupUtil {
   private GroupRepository groupRepository;
   private GroupMemberRepository groupMemberRepository;
 
-  public TestGroupUtil(GroupRepository groupRepository,
-      GroupMemberRepository groupMemberRepository) {
+  public TestGroupUtil(
+      GroupRepository groupRepository, GroupMemberRepository groupMemberRepository) {
     this.groupRepository = groupRepository;
     this.groupMemberRepository = groupMemberRepository;
   }
@@ -44,13 +44,14 @@ public class TestGroupUtil {
       // 이미 존재할 경우 다시 반복
     }
 
-    Group group = groupRepository.save(
-        Group.builder()
-            .groupUri(groupUri)
-            .groupName(groupName)
-            .hostUser(hostUser)
-            .state(State.ACTIVE)
-            .build());
+    Group group =
+        groupRepository.save(
+            Group.builder()
+                .groupUri(groupUri)
+                .groupName(groupName)
+                .hostUser(hostUser)
+                .state(State.ACTIVE)
+                .build());
 
     // 그룹 멤버 추가
     groupMemberRepository.save(createGroupMember(group, hostUser));
@@ -66,10 +67,7 @@ public class TestGroupUtil {
    * @return
    */
   public GroupMember createGroupMember(Group group, User user) {
-    GroupMember groupMember = GroupMember.builder()
-        .group(group)
-        .user(user)
-        .build();
+    GroupMember groupMember = GroupMember.builder().group(group).user(user).build();
 
     return groupMemberRepository.save(groupMember);
   }

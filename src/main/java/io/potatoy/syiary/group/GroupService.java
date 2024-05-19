@@ -63,20 +63,23 @@ public class GroupService {
     }
 
     // group 정보 저장
-    Group group = groupRepository.save(
-        Group.builder()
-            .groupUri(groupUri)
-            .groupName(dto.getGroupName())
-            .hostUser(user)
-            .state(State.ACTIVE)
-            .build());
+    Group group =
+        groupRepository.save(
+            Group.builder()
+                .groupUri(groupUri)
+                .groupName(dto.getGroupName())
+                .hostUser(user)
+                .state(State.ACTIVE)
+                .build());
     // group member에 만든 본인 추가
-    groupMemberRepository.save(
-        groupMemberUtil.createGroupMemberEntity(user, group));
+    groupMemberRepository.save(groupMemberUtil.createGroupMemberEntity(user, group));
 
-    logger.info("createGroup. userId={}, groupId={}, groupUri={}, groupName={}", user.getId(),
+    logger.info(
+        "createGroup. userId={}, groupId={}, groupUri={}, groupName={}",
+        user.getId(),
         group.getId(),
-        group.getGroupUri(), group.getGroupName());
+        group.getGroupUri(),
+        group.getGroupName());
 
     return new CreateGroupResponse(group.getId(), group.getGroupUri(), group.getGroupName());
   }
@@ -98,12 +101,18 @@ public class GroupService {
     for (GroupMember member : inMembers) {
       Group group = member.getGroup();
 
-      UserResponse userResponse = new UserResponse(group.getHostUser().getId(),
-          group.getHostUser().getEmail(),
-          group.getHostUser().getNickname());
-      GroupInfoResponse groupInfoResponse = new GroupInfoResponse(group.getId(),
-          group.getGroupUri(),
-          group.getGroupName(), group.getCreatedAt(), userResponse);
+      UserResponse userResponse =
+          new UserResponse(
+              group.getHostUser().getId(),
+              group.getHostUser().getEmail(),
+              group.getHostUser().getNickname());
+      GroupInfoResponse groupInfoResponse =
+          new GroupInfoResponse(
+              group.getId(),
+              group.getGroupUri(),
+              group.getGroupName(),
+              group.getCreatedAt(),
+              userResponse);
 
       groups.add(groupInfoResponse);
     }
@@ -120,7 +129,9 @@ public class GroupService {
     Optional<Group> _group = groupRepository.findByGroupUri(groupUri);
     if (_group.isEmpty()) {
       String message = "Group not found.";
-      logger.warn("loadGroupInfo:GroupException. userId={}, groupUri={}\nmessage={}", user.getId(),
+      logger.warn(
+          "loadGroupInfo:GroupException. userId={}, groupUri={}\nmessage={}",
+          user.getId(),
           groupUri,
           message);
 
@@ -132,17 +143,25 @@ public class GroupService {
     Optional<GroupMember> _groupMember = groupMemberRepository.findByUserAndGroup(user, group);
     if (_groupMember.isEmpty()) {
       String message = "There are no users in the member list.";
-      logger.warn("loadGroupInfo:GroupMemberException. userId={}, groupId={}\nmessage={}",
-          user.getId(), group.getId(), message);
+      logger.warn(
+          "loadGroupInfo:GroupMemberException. userId={}, groupId={}\nmessage={}",
+          user.getId(),
+          group.getId(),
+          message);
 
       throw new GroupMemberException(message);
     }
 
     // 그룹에 속해있으면 그룹 정보를 반환한다.
-    UserResponse userResponse = new UserResponse(group.getHostUser().getId(),
-        group.getHostUser().getEmail(),
-        group.getHostUser().getNickname());
-    return new GroupInfoResponse(group.getId(), group.getGroupUri(), group.getGroupName(),
+    UserResponse userResponse =
+        new UserResponse(
+            group.getHostUser().getId(),
+            group.getHostUser().getEmail(),
+            group.getHostUser().getNickname());
+    return new GroupInfoResponse(
+        group.getId(),
+        group.getGroupUri(),
+        group.getGroupName(),
         group.getCreatedAt(),
         userResponse);
   }
@@ -169,9 +188,8 @@ public class GroupService {
     Group loadGroup = _loadGroup.get();
 
     /**
-     * 요청한 사람이 group의 host인지 확인하고 처리한다.
-     * 1. 유저 id와 host id가 동일한지 확인한다.
-     * 2. user가 작성한 sign과 group 이름과 동일한지 확인한다.
+     * 요청한 사람이 group의 host인지 확인하고 처리한다. 1. 유저 id와 host id가 동일한지 확인한다. 2. user가 작성한 sign과 group 이름과
+     * 동일한지 확인한다.
      */
     if (!userId.equals(loadGroup.getHostUser().getId())) {
       // host id와 요청자의 id가 동일하지 않음
@@ -182,7 +200,8 @@ public class GroupService {
     }
     if (!dto.getGroupNameSign().equals(loadGroup.getGroupName())) {
       // 사용자가 입력한 그룹 이름과 실제 그룹 이름이 같지 않음.
-      String message = "The group name entered by the user and the actual group name are not the same.";
+      String message =
+          "The group name entered by the user and the actual group name are not the same.";
       logger.warn("deleteGroup:GroupException. message={}", message);
 
       throw new GroupException(message);
@@ -199,5 +218,4 @@ public class GroupService {
 
     groupRepository.delete(loadGroup);
   }
-
 }

@@ -19,25 +19,32 @@ public class UserService {
   public User save(AddUserRequest dto) {
     BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-    User user = userRepository.save(User.builder()
-        .email(dto.getEmail())
-        .password(encoder.encode(dto.getPassword()))
-        .nickname(dto.getNickname())
-        .build());
+    User user =
+        userRepository.save(
+            User.builder()
+                .email(dto.getEmail())
+                .password(encoder.encode(dto.getPassword()))
+                .nickname(dto.getNickname())
+                .build());
 
-    logger.info("save. userId={}, userEmail={}, userNickname={}", user.getId(), user.getEmail(),
+    logger.info(
+        "save. userId={}, userEmail={}, userNickname={}",
+        user.getId(),
+        user.getEmail(),
         user.getNickname());
 
     return user;
   }
 
   public User findById(Long userId) {
-    return userRepository.findById(userId)
+    return userRepository
+        .findById(userId)
         .orElseThrow(() -> new IllegalArgumentException("Unexpected user"));
   }
 
   public User findByEmail(String email) {
-    return userRepository.findByEmail(email)
+    return userRepository
+        .findByEmail(email)
         .orElseThrow(() -> new IllegalArgumentException("Unexpected user"));
   }
 }
