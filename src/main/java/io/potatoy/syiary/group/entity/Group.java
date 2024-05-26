@@ -59,6 +59,9 @@ public class Group {
   @OneToMany(mappedBy = "group", cascade = CascadeType.REMOVE)
   private List<Post> posts = new ArrayList<>();
 
+  @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
+  private List<GroupMember> groupMembers = new ArrayList<>();
+
   @Builder
   public Group(String groupUri, String groupName, User hostUser, State state) {
     this.groupUri = groupUri;

@@ -1,11 +1,16 @@
 package io.potatoy.syiary.user.entity;
 
+import io.potatoy.syiary.group.entity.Group;
+import io.potatoy.syiary.group.entity.GroupMember;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import lombok.AccessLevel;
@@ -35,6 +40,12 @@ public class User implements UserDetails { // UserDetails를 상속받아 인증
 
   @Column(name = "nickname", nullable = false)
   private String nickname;
+
+  @OneToMany(mappedBy = "hostUser", cascade = CascadeType.REMOVE)
+  private List<Group> groups = new ArrayList<>();
+
+  @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+  private List<GroupMember> groupMembers = new ArrayList<>();
 
   @Builder
   public User(String email, String password, String nickname) {
