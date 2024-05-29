@@ -20,25 +20,25 @@ import lombok.NoArgsConstructor;
 @Entity
 public class PostFile {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "type", nullable = false)
-    private FileType fileType;
+  @Enumerated(EnumType.STRING)
+  @Column(name = "type", nullable = false)
+  private FileType fileType;
 
-    @ManyToOne
-    @JoinColumn(name = "post_id")
-    private Post post;
+  @ManyToOne
+  @JoinColumn(name = "post_id")
+  private Post post;
 
-    @Column(name = "file_name", nullable = false)
-    private String fileName;
+  @Column(name = "file_name", nullable = false)
+  private String fileName;
 
-    @Builder
-    public PostFile(FileType fileType, Post post, String fileName) {
-        this.fileType = fileType;
-        this.post = post;
-        this.fileName = fileName;
-    }
+  @Builder
+  public PostFile(FileType fileType, Post post, String fileName) {
+    this.fileType = fileType;
+    this.post = post;
+    this.fileName = fileName;
+  }
 }

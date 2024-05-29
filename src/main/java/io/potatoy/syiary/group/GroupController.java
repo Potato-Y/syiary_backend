@@ -1,7 +1,11 @@
 package io.potatoy.syiary.group;
 
+import io.potatoy.syiary.group.dto.CreateGroupRequest;
+import io.potatoy.syiary.group.dto.CreateGroupResponse;
+import io.potatoy.syiary.group.dto.DeleteGroupRequest;
+import io.potatoy.syiary.group.dto.GroupInfoResponse;
 import java.util.List;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -13,45 +17,39 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.potatoy.syiary.group.dto.CreateGroupRequest;
-import io.potatoy.syiary.group.dto.CreateGroupResponse;
-import io.potatoy.syiary.group.dto.DeleteGroupRequest;
-import io.potatoy.syiary.group.dto.GroupInfoResponse;
-import lombok.RequiredArgsConstructor;
-
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api")
 public class GroupController {
 
-    private final GroupService groupService;
+  private final GroupService groupService;
 
-    @PostMapping("/groups") // 그룹 생성
-    public ResponseEntity<CreateGroupResponse> createGroup(@Validated @RequestBody CreateGroupRequest request) {
+  @PostMapping("/groups") // 그룹 생성
+  public ResponseEntity<CreateGroupResponse> createGroup(
+      @Validated @RequestBody CreateGroupRequest request) {
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(groupService.createGroup(request));
-    }
+    return ResponseEntity.status(HttpStatus.CREATED).body(groupService.createGroup(request));
+  }
 
-    @GetMapping("/groups") // 그룹 목록 가져오기
-    public ResponseEntity<List<GroupInfoResponse>> getGroupList() {
-        List<GroupInfoResponse> groups = groupService.loadGroups();
+  @GetMapping("/groups") // 그룹 목록 가져오기
+  public ResponseEntity<List<GroupInfoResponse>> getGroupList() {
+    List<GroupInfoResponse> groups = groupService.loadGroups();
 
-        return ResponseEntity.status(HttpStatus.OK).body(groups);
-    }
+    return ResponseEntity.status(HttpStatus.OK).body(groups);
+  }
 
-    @GetMapping("/groups/{groupUri}") // 그룹 정보 가져오기
-    public ResponseEntity<GroupInfoResponse> getGroupInfo(@PathVariable String groupUri) {
-        GroupInfoResponse group = groupService.loadGroupInfo(groupUri);
+  @GetMapping("/groups/{groupUri}") // 그룹 정보 가져오기
+  public ResponseEntity<GroupInfoResponse> getGroupInfo(@PathVariable String groupUri) {
+    GroupInfoResponse group = groupService.loadGroupInfo(groupUri);
 
-        return ResponseEntity.status(HttpStatus.OK).body(group);
-    }
+    return ResponseEntity.status(HttpStatus.OK).body(group);
+  }
 
-    @DeleteMapping("/groups/{groupUri}") // 그룹 삭제
-    public ResponseEntity<String> deleteGroup(@PathVariable String groupUri,
-            @Validated @RequestBody DeleteGroupRequest request) {
-        groupService.deleteGroup(groupUri, request);
+  @DeleteMapping("/groups/{groupUri}") // 그룹 삭제
+  public ResponseEntity<String> deleteGroup(
+      @PathVariable String groupUri, @Validated @RequestBody DeleteGroupRequest request) {
+    groupService.deleteGroup(groupUri, request);
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-    }
+    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+  }
 }

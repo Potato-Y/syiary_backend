@@ -11,6 +11,6 @@ import lombok.Setter;
 @Setter
 public class SecessionGroupRequest {
 
-    // 사용자를 그룹에서 추방시킨다.
-    private String userEmail;
+  // 사용자를 그룹에서 추방시킨다.
+  private String userEmail;
 }

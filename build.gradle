@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.1.1'
     id 'io.spring.dependency-management' version '1.1.0'
+    id "com.diffplug.spotless" version "6.25.0"
 }
 
 group = 'io.potatoy'
@@ -43,6 +44,7 @@ dependencies {
 
     runtimeOnly('com.h2database:h2')
 
+    testCompileOnly('org.projectlombok:lombok:1.18.26')
     testAnnotationProcessor('org.projectlombok:lombok:1.18.26')
     testImplementation('org.springframework.boot:spring-boot-starter-test:3.1.0')
     testImplementation('org.springframework.security:spring-security-test:6.0.2')
@@ -53,8 +55,42 @@ tasks.named('test') {
 }
 
 configurations {
-    all{
+    all {
         // 내부 로깅 프레임워크 Logback을 제외
         exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+    }
+}
+
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
+
+spotless {
+    java {
+        // import 순서 정의
+        importOrder(
+                "java",
+                "javax",
+                "lombok",
+                "org.springframework",
+                "",
+                "\\#",
+                "org.junit",
+                "\\#org.junit",
+                "com.guide",
+                "\\#com.guide"
+        )
+
+        // 사용하지 않는 import 제거
+        removeUnusedImports()
+        // 구글 자바 포맷 적용
+        googleJavaFormat()
+
+        // indentWithTabs(2) // TODO: 추후 추가 고려
+        indentWithSpaces(2)
+
+        // 공백 제거
+        trimTrailingWhitespace()
+        // 끝부분 New Line 처리
+        endWithNewline()
     }
 }

@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Getter
 public class CreatePostResponse {
 
-    private Long postId;
-    private String content;
+  private Long postId;
+  private String content;
 }

@@ -6,13 +6,12 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum FileType {
+  IMAGE("image"), // 사진
+  VIDEO("video"); // 영상
 
-    IMAGE("image"), // 사진
-    VIDEO("video"); // 영상
+  private String type;
 
-    private String type;
-
-    FileType(String type) {
-        this.type = type;
-    }
+  FileType(String type) {
+    this.type = type;
+  }
 }

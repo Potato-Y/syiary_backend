@@ -12,6 +12,5 @@ import lombok.Setter;
 @Setter
 public class SignupGroupRequest {
 
-    @NotNull
-    private String userEmail;
+  @NotNull private String userEmail;
 }

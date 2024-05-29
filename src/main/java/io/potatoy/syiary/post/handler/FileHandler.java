@@ -1,19 +1,5 @@
 package io.potatoy.syiary.post.handler;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.stereotype.Component;
-import org.springframework.util.FileCopyUtils;
-import org.springframework.util.ObjectUtils;
-import org.springframework.web.multipart.MultipartFile;
-
 import io.potatoy.syiary.enums.Env;
 import io.potatoy.syiary.enums.FileType;
 import io.potatoy.syiary.group.entity.Group;
@@ -22,151 +8,155 @@ import io.potatoy.syiary.post.entity.PostFile;
 import io.potatoy.syiary.user.entity.User;
 import io.potatoy.syiary.util.EnvProperties;
 import io.potatoy.syiary.util.UriMaker;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Component;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.util.ObjectUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 @Component
 public class FileHandler {
 
-    private final Logger logger = LogManager.getLogger(FileHandler.class);
-    private final EnvProperties envProperties;
+  private final Logger logger = LogManager.getLogger(FileHandler.class);
+  private final EnvProperties envProperties;
 
-    private static String BASE_PATH_LOCAL = "files_local/";
-    private static String BASE_PATH_PROD = "files/";
+  private static String BASE_PATH_LOCAL = "files_local/";
+  private static String BASE_PATH_PROD = "files/";
 
-    public FileHandler(EnvProperties envProperties) {
-        this.envProperties = envProperties;
+  public FileHandler(EnvProperties envProperties) {
+    this.envProperties = envProperties;
+  }
+
+  public List<PostFile> parseFileInfo(
+      User user, Group group, Post post, List<MultipartFile> multipartFiles) throws Exception {
+
+    UriMaker uriMaker = new UriMaker();
+
+    // 반환할 파일 리스트
+    List<PostFile> postFileList = new ArrayList<>();
+
+    // 파일이 비어있으면 빈 리스트 반환
+    if (multipartFiles == null || multipartFiles.isEmpty()) {
+      logger.info("not file");
+      return postFileList;
     }
 
-    public List<PostFile> parseFileInfo(
-            User user,
-            Group group,
-            Post post,
-            List<MultipartFile> multipartFiles) throws Exception {
+    // 경로를 지정, 해당 경로에 저장
+    String path = getPath(group.getId(), post.getId());
 
-        UriMaker uriMaker = new UriMaker();
+    File file = new File(path);
+    // 저장할 위치의 디렉토리가 존재하지 않을 경우 생성
 
-        // 반환할 파일 리스트
-        List<PostFile> postFileList = new ArrayList<>();
-
-        // 파일이 비어있으면 빈 리스트 반환
-        if (multipartFiles == null || multipartFiles.isEmpty()) {
-            logger.info("not file");
-            return postFileList;
-        }
-
-        // 경로를 지정, 해당 경로에 저장
-        String path = getPath(group.getId(), post.getId());
-
-        File file = new File(path);
-        // 저장할 위치의 디렉토리가 존재하지 않을 경우 생성
-
-        if (!file.exists()) {
-            // mkdir()이 아닌 mkdirs() 메소드 사용.
-            // 상위 디렉토리가 존재하지 않을 때 그것까지 생성
-            file.mkdirs();
-        }
-
-        // 파일 컨트롤
-        for (MultipartFile multipartFile : multipartFiles) {
-            // 파일이 비어있는 상태가 아니어야 오류가 나지 않는다.
-            if (!multipartFile.isEmpty()) {
-                // 우선적으로 jpeg, png 파일만 허용 및 처리
-                String contentType = multipartFile.getContentType();
-                String originalFileExtension;
-                FileType fileType;
-
-                // 확장자명이 없으면 잘 못된 파일
-                if (ObjectUtils.isEmpty(contentType) || contentType == null) {
-                    break;
-                } else {
-                    if (contentType.contains("image/jpeg")) {
-                        originalFileExtension = ".jpg";
-                        fileType = FileType.IMAGE;
-                    } else if (contentType.contains("image/png")) {
-                        originalFileExtension = ".png";
-                        fileType = FileType.IMAGE;
-                    }
-                    // 다른 확장명이면 아무 일을 하지 않는다.
-                    else {
-                        break;
-                    }
-                }
-
-                // 파일 이름을 임의로 변경하여 저장
-                // 파일 이름 양식: {date}.{랜덤 문자}
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
-                String current_date = simpleDateFormat.format(new Date());
-
-                String newFileName = current_date + "." + uriMaker.createName() + originalFileExtension;
-
-                // 생성 후 리스트에 추가
-                PostFile postFile = PostFile.builder()
-                        .post(post)
-                        .fileType(fileType)
-                        .fileName(newFileName)
-                        .build();
-
-                postFileList.add(postFile);
-
-                // 저장된 파일로 변경하여 이를 보여주기 위함
-                file = new File(path + newFileName);
-                multipartFile.transferTo(file);
-            }
-
-        }
-        return postFileList;
-
+    if (!file.exists()) {
+      // mkdir()이 아닌 mkdirs() 메소드 사용.
+      // 상위 디렉토리가 존재하지 않을 때 그것까지 생성
+      file.mkdirs();
     }
 
-    public void deleteFile(PostFile postFile) {
-        final String filePath = getPath(postFile.getPost().getId(), postFile.getPost().getId())
-                + postFile.getFileName();
+    // 파일 컨트롤
+    for (MultipartFile multipartFile : multipartFiles) {
+      // 파일이 비어있는 상태가 아니어야 오류가 나지 않는다.
+      if (!multipartFile.isEmpty()) {
+        // 우선적으로 jpeg, png 파일만 허용 및 처리
+        String contentType = multipartFile.getContentType();
+        String originalFileExtension;
+        FileType fileType;
 
-        File file = new File(filePath);
-        file.delete();
-    }
-
-    /**
-     * 이미지 파일을 byte로 반환
-     * 
-     * @param groupId
-     * @param postId
-     * @param fileName
-     * @return
-     */
-    public byte[] getFile(Long groupId, Long postId, String fileName) {
-        // 경로를 지정, 해당 경로에 저장
-        String path = getPath(groupId, postId) + fileName;
-        File file = new File(path); // 해당 파일을 불러온다.
-
-        byte[] fileByte = null;
-
-        try {
-            fileByte = FileCopyUtils.copyToByteArray(file);
-        } catch (IOException e) {
-            logger.warn("getFile. Not found. message={}", e.getMessage());
-        }
-
-        return fileByte;
-    }
-
-    /**
-     * 절대경로를 포함한 파일이 저장될 경로를 반환한다.
-     * 
-     * @param groupId
-     * @param postId
-     * @return absolute path/group id/post id/
-     */
-    private String getPath(Long groupId, Long postId) {
-        // 프로젝트 폴더에 저장하기 위해 절대 경로를 설정 (window의 Tomcat은 temp 파일 이용)
-        String absolutePath = new File("").getAbsolutePath() + "/";
-
-        String path;
-        if (envProperties.getMode().equals(Env.PROD.getType())) {
-            path = BASE_PATH_PROD + Long.toString(groupId) + "/" + Long.toString(postId) + "/";
+        // 확장자명이 없으면 잘 못된 파일
+        if (ObjectUtils.isEmpty(contentType) || contentType == null) {
+          break;
         } else {
-            path = BASE_PATH_LOCAL + Long.toString(groupId) + "/" + Long.toString(postId) + "/";
+          if (contentType.contains("image/jpeg")) {
+            originalFileExtension = ".jpg";
+            fileType = FileType.IMAGE;
+          } else if (contentType.contains("image/png")) {
+            originalFileExtension = ".png";
+            fileType = FileType.IMAGE;
+          }
+          // 다른 확장명이면 아무 일을 하지 않는다.
+          else {
+            break;
+          }
         }
 
-        return absolutePath + path;
+        // 파일 이름을 임의로 변경하여 저장
+        // 파일 이름 양식: {date}.{랜덤 문자}
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+        String current_date = simpleDateFormat.format(new Date());
+
+        String newFileName = current_date + "." + uriMaker.createName() + originalFileExtension;
+
+        // 생성 후 리스트에 추가
+        PostFile postFile =
+            PostFile.builder().post(post).fileType(fileType).fileName(newFileName).build();
+
+        postFileList.add(postFile);
+
+        // 저장된 파일로 변경하여 이를 보여주기 위함
+        file = new File(path + newFileName);
+        multipartFile.transferTo(file);
+      }
     }
+    return postFileList;
+  }
+
+  public void deleteFile(PostFile postFile) {
+    final String filePath =
+        getPath(postFile.getPost().getId(), postFile.getPost().getId()) + postFile.getFileName();
+
+    File file = new File(filePath);
+    file.delete();
+  }
+
+  /**
+   * 이미지 파일을 byte로 반환
+   *
+   * @param groupId
+   * @param postId
+   * @param fileName
+   * @return
+   */
+  public byte[] getFile(Long groupId, Long postId, String fileName) {
+    // 경로를 지정, 해당 경로에 저장
+    String path = getPath(groupId, postId) + fileName;
+    File file = new File(path); // 해당 파일을 불러온다.
+
+    byte[] fileByte = null;
+
+    try {
+      fileByte = FileCopyUtils.copyToByteArray(file);
+    } catch (IOException e) {
+      logger.warn("getFile. Not found. message={}", e.getMessage());
+    }
+
+    return fileByte;
+  }
+
+  /**
+   * 절대경로를 포함한 파일이 저장될 경로를 반환한다.
+   *
+   * @param groupId
+   * @param postId
+   * @return absolute path/group id/post id/
+   */
+  private String getPath(Long groupId, Long postId) {
+    // 프로젝트 폴더에 저장하기 위해 절대 경로를 설정 (window의 Tomcat은 temp 파일 이용)
+    String absolutePath = new File("").getAbsolutePath() + "/";
+
+    String path;
+    if (envProperties.getMode().equals(Env.PROD.getType())) {
+      path = BASE_PATH_PROD + Long.toString(groupId) + "/" + Long.toString(postId) + "/";
+    } else {
+      path = BASE_PATH_LOCAL + Long.toString(groupId) + "/" + Long.toString(postId) + "/";
+    }
+
+    return absolutePath + path;
+  }
 }

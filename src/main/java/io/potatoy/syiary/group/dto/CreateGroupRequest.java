@@ -11,6 +11,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CreateGroupRequest {
-    @NotBlank
-    private String groupName;
+
+  @NotBlank private String groupName;
 }

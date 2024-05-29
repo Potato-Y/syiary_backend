@@ -6,13 +6,12 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum Env {
+  LOCAL("local"),
+  PROD("prod");
 
-    LOCAL("local"),
-    PROD("prod");
+  private String type;
 
-    private String type;
-
-    Env(String type) {
-        this.type = type;
-    }
+  Env(String type) {
+    this.type = type;
+  }
 }
